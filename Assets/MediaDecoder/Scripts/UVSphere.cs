@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace HTC.UnityPlugin.Multimedia
 {
-	[RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 	public class UVSphere : MonoBehaviour {
 		public enum FrontFaceType { Inside, Outside };
 		public enum TextureOrigin { BottomLeft, TopLeft };
