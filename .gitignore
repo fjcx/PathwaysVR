@@ -9,6 +9,7 @@
 Assets/AssetStoreTools*
 UnityGenerated/
 TestVideos/*
+StreamingAssets/*.mp4
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
