@@ -3,26 +3,52 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using HTC.UnityPlugin.Multimedia;
+using UnityEngine.Events;
 
 public class GameController : MonoBehaviour {
-
-    public GameObject mainCamera;
-    public VideoSourceController vidController;
-
-    public Image reticleDot;
-    public Image reticleSelection;
-    public Image reticleBackground;
 
     private BlinkEffect blinkEffect;
     private bool canBlink = true;
     private bool cancelSelection = true;
-
     private bool cancelBlink = false;
+
+    private GameObject currVidPlayer;
+    private int vidSphereDistance = 25;
+    private int currVidIndex = 0;
+    private IVideoPlayerController[] videoPlayerControllers;
+
+    public Image reticleDot;
+    public Image reticleSelection;
+    public Image reticleBackground;
+    public GameObject mainCamera;
+    public GameObject desktopVidPlayerPrefab;
+    public GameObject androidVidPlayerPrefab;
+
+    public string[] movieNames;
 
     // Use this for initialization
     void Start() {
         blinkEffect = mainCamera.GetComponent<BlinkEffect>();
         showRecticleDot();
+        videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
+        for (int i = 0; i < movieNames.Length; i++) {
+
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+            currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
+#else
+            currVidPlayer = Instantiate(desktopVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
+#endif
+            videoPlayerControllers[i] = currVidPlayer.GetComponent<IVideoPlayerController>();
+
+            videoPlayerControllers[i].PrepareVideo(movieNames[i]);
+        }
+    }
+
+    public void VidInitCompleted(string vidName) {
+        // when a vidsphere is completed it calls here !!!
+        if (videoPlayerControllers[0].GetVidName() == vidName) {
+            videoPlayerControllers[0].PlayVideo();
+        }
     }
 
     public void showRecticleDot() {
@@ -75,6 +101,15 @@ public class GameController : MonoBehaviour {
         }
     }
 
+    private void NextVideo() {
+        videoPlayerControllers[currVidIndex].PauseVideo();
+        videoPlayerControllers[currVidIndex].StopVideo();
+        currVidIndex++; // need null index check !!
+        // move camera to next sphere locataion
+        mainCamera.transform.position = new Vector3(currVidIndex * vidSphereDistance, 0, 0);
+        videoPlayerControllers[currVidIndex].PlayVideo();
+    }
+
     public void PlayBlinkEffect() {
         Debug.Log("Trying to Blink");
         if (canBlink && cancelBlink == false) {
@@ -104,11 +139,12 @@ public class GameController : MonoBehaviour {
         //blinkEffect.maskValue = maxMask;
 
         if (cancelBlink == false) {
+            NextVideo();
             //EventController.Instance.Publish(new TeleportPlayerEvent(moveTo));
             //movePlayerTo(moveTo);
             //clearSphere();
             //movePlayerToNextVidSphere(true);        // TODO: can set to dark world
-            vidController.nextVideo();
+            //vidController.nextVideo();
         }
 
         yield return new WaitForSeconds(blinkWait);

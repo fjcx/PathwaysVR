@@ -3,6 +3,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections;
+using System.IO;
 
 namespace HTC.UnityPlugin.Multimedia
 {
@@ -59,8 +60,8 @@ namespace HTC.UnityPlugin.Multimedia
 			}
 			decoder.onInitComplete.AddListener(decoder.startDecoding);
 			decoder.onInitComplete.AddListener(decoder.onInitComplete.RemoveAllListeners);
-			decoder.initDecoder(fileSeeker.getPath());
-		}
+            decoder.initDecoder(fileSeeker.getPath());
+        }
 
 		public void nextVideo() {
 			if (!isInitialized) {
@@ -103,5 +104,24 @@ namespace HTC.UnityPlugin.Multimedia
 			adaptReso.x *= ((float) width / height);
 			transform.localScale = adaptReso;
 		}
-	}
+
+        string GetStreamingAssetsPath() {
+            string path;
+#if UNITY_EDITOR
+            path = Application.streamingAssetsPath;
+#elif UNITY_ANDROID
+            path = Application.streamingAssetsPath;
+#elif UNITY_IOS
+             path = "file:" + Application.dataPath + "/Raw";
+#else
+             //Desktop (Mac OS or Windows)
+             path = "file:"+ Application.dataPath + "/StreamingAssets";
+#endif
+
+            return path;
+        }
+        
+    }
+
+    
 }

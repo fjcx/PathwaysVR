@@ -14,7 +14,7 @@ namespace HTC.UnityPlugin.Multimedia
 		public int contentIndex { get; private set; }
 
 		public bool loadFolder(string path, string filter) {
-			if (!Directory.Exists(path)) {
+            if (!Directory.Exists(path)) {
 				Debug.Log(LOG_TAG + " path invalid.");
 				return false;
 			}

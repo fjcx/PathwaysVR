@@ -349,55 +349,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9322df4a7395d645a7e87f822ebaf1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCamera: {fileID: 1410971761}
-  desktopVidPlayerPrefab: {fileID: 0}
-  androidVidPlayerPrefab: {fileID: 0}
-  movieName: 
   reticleDot: {fileID: 348735768}
   reticleSelection: {fileID: 227193576}
   reticleBackground: {fileID: 977561789}
---- !u!1001 &1326259654
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816667386539030, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 39e1a5ed5d97de549b5dc17b764db8bf, type: 2}
-  m_IsPrefabParent: 0
+  mainCamera: {fileID: 1410971761}
+  desktopVidPlayerPrefab: {fileID: 1969473224563182, guid: 39e1a5ed5d97de549b5dc17b764db8bf,
+    type: 2}
+  androidVidPlayerPrefab: {fileID: 1511672128459476, guid: c0f767cefa427a14e8ededa97a627029,
+    type: 2}
+  movieNames:
+  - band.mp4
+  - caroline.mp4
 --- !u!1 &1410971761
 GameObject:
   m_ObjectHideFlags: 0
@@ -721,7 +683,7 @@ Transform:
   m_LocalScale: {x: 0.2, y: 2.5, z: 1.1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 41.846, z: 0}
 --- !u!23 &1705867673
 MeshRenderer:
