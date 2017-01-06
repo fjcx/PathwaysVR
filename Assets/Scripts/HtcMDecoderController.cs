@@ -116,5 +116,9 @@ namespace HTC.UnityPlugin.Multimedia {
         public string GetVidName() {
             return videoName;
         }
+
+        public void MoveTo(Vector3 newPos) {
+            this.transform.position = newPos;
+        }
     }
 }

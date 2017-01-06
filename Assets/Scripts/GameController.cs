@@ -35,6 +35,8 @@ public class GameController : MonoBehaviour {
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
             currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
+            Debug.Log("Instantiate ! :VidIndex: " + i + ", In location: " + currVidPlayer.transform.position);
+            Debug.Log("Instantiate ! , currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
 #else
             currVidPlayer = Instantiate(desktopVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
 #endif
@@ -102,11 +104,20 @@ public class GameController : MonoBehaviour {
     }
 
     private void NextVideo() {
+        Debug.Log("VidIndex: " + currVidIndex + ", In location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PauseVideo();
         videoPlayerControllers[currVidIndex].StopVideo();
+
+        // tmp
+        videoPlayerControllers[currVidIndex].MoveTo(new Vector3(-vidSphereDistance, 0, 0));
+
         currVidIndex++; // need null index check !!
+        // tmp
+        videoPlayerControllers[currVidIndex].MoveTo(mainCamera.transform.position);
         // move camera to next sphere locataion
-        mainCamera.transform.position = new Vector3(currVidIndex * vidSphereDistance, 0, 0);
+        //mainCamera.transform.position = new Vector3(currVidIndex * vidSphereDistance, 0, 0);
+
+        Debug.Log("VidIndex: " + currVidIndex + ", Moving to location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PlayVideo();
     }
 
@@ -166,5 +177,6 @@ public class GameController : MonoBehaviour {
         blinkEffect.maskValue = minMask;
         canBlink = true;
         cancelBlink = false;
+        Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
     }
 }

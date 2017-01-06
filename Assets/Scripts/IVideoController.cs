@@ -9,4 +9,5 @@ public interface IVideoPlayerController {
     void StopVideo();
     void PrepareVideo(string vidName);
     string GetVidName();
+    void MoveTo(Vector3 newPos);
 }

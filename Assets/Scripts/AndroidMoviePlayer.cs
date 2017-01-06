@@ -74,6 +74,8 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
     private GameController gameController;
     private string videoName;
 
+    private Boolean mediaSufaceInit = false;
+
 #if (UNITY_ANDROID && !UNITY_EDITOR)
 	private Texture2D nativeTexture = null;
 	private IntPtr	  nativeTexId = IntPtr.Zero;
@@ -145,13 +147,14 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
             Debug.LogError("No media file name provided");
         }*/
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+        // moved to playVideo
+/*#if UNITY_ANDROID && !UNITY_EDITOR
 		nativeTexture = Texture2D.CreateExternalTexture(textureWidth, textureHeight,
 		                                                TextureFormat.RGBA32, true, false,
 		                                                IntPtr.Zero);
 
 		IssuePluginEvent(MediaSurfaceEventType.Initialize);
-#endif
+#endif*/
     }
 
     /// <summary>
@@ -226,6 +229,8 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
     }
 
     void Update() {
+        if (mediaSufaceInit == true) {
+        
 #if (UNITY_ANDROID && !UNITY_EDITOR)
             if (!videoPaused) {
                 IntPtr currTexId = OVR_Media_Surface_GetNativeTexture();
@@ -247,6 +252,7 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
                 }
             }
 #endif
+        }
     }
 
     public void Rewind() {
@@ -333,22 +339,49 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
     public void PlayVideo() {
         Debug.Log("Play Video");
+#if UNITY_ANDROID && !UNITY_EDITOR
+		nativeTexture = Texture2D.CreateExternalTexture(textureWidth, textureHeight,
+		                                                TextureFormat.RGBA32, true, false,
+		                                                IntPtr.Zero);
+
+		IssuePluginEvent(MediaSurfaceEventType.Initialize);
+#endif
+        mediaSufaceInit = true;
+        
         // Video must start only after mediaFullPath is filled in
         Debug.Log("MovieSample Start");
+        Debug.Log("PlayVid: " + this.videoName + ", In location: " + this.transform.position);
+        Debug.Log("PlayVid ! , Camera Location: " + gameController.mainCamera.transform.position);
         StartCoroutine(DelayedStartVideo());
     }
 
     public void StopVideo() {
-        DestroyObject(this.gameObject);
+        mediaSufaceInit = false;
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        Debug.Log("Shutting down video");
+		// This will trigger the shutdown on the render thread
+		IssuePluginEvent(MediaSurfaceEventType.Shutdown);
+        mediaPlayer.Call("stop");
+        mediaPlayer.Call("release");   
+#endif
+        //mediaPlayer = null;
+        //DestroyObject(this.gameObject);
     }
 
     public void PauseVideo() {
         SetPaused(true);
     }
 
+    public void MoveTo(Vector3 newPos) {
+        this.transform.position = newPos;
+    }
+
     public void PrepareVideo(string vidName) {
+        
         Debug.Log("Prep vid");
         this.videoName = vidName;
+        Debug.Log("PrepareVid: " + this.videoName + ", In location: " + this.transform.position);
+        Debug.Log("PrepareVid ! , Camera Location: " + gameController.mainCamera.transform.position);
         if (mediaRenderer.material == null || mediaRenderer.material.mainTexture == null) {
             Debug.LogError("No material for movie surface");
         }
