@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour {
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
         for (int i = 0; i < movieNames.Length; i++) {
 
-#if (UNITY_ANDROID && !UNITY_EDITOR)
+#if ((UNITY_ANDROID && !UNITY_EDITOR) || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
             currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
             Debug.Log("Instantiate ! :VidIndex: " + i + ", In location: " + currVidPlayer.transform.position);
             Debug.Log("Instantiate ! , currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);

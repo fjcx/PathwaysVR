@@ -467,8 +467,8 @@ MonoBehaviour:
   androidVidPlayerPrefab: {fileID: 1511672128459476, guid: c0f767cefa427a14e8ededa97a627029,
     type: 2}
   movieNames:
-  - bridgeupsidedown.mp4
   - caroline.mp4
+  - bridgeupsidedown.mp4
 --- !u!1 &1410971761
 GameObject:
   m_ObjectHideFlags: 0
