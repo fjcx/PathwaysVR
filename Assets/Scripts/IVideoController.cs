@@ -8,6 +8,9 @@ public interface IVideoPlayerController {
     void PauseVideo();
     void StopVideo();
     void PrepareVideo(string vidName);
+    void PrepareVideos(string[] vidNames);
     string GetVidName();
     void MoveTo(Vector3 newPos);
+
+    void SwitchVideo();
 }

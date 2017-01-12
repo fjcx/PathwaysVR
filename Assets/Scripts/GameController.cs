@@ -8,6 +8,7 @@ using UnityEngine.Events;
 public class GameController : MonoBehaviour {
 
     private BlinkEffect blinkEffect;
+    private GradualGrayScaleEffect gradGrayEffect;
     private bool canBlink = true;
     private bool cancelSelection = true;
     private bool cancelBlink = false;
@@ -29,6 +30,7 @@ public class GameController : MonoBehaviour {
     // Use this for initialization
     void Start() {
         blinkEffect = mainCamera.GetComponent<BlinkEffect>();
+        gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
         showRecticleDot();
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
         for (int i = 0; i < movieNames.Length; i++) {
@@ -44,6 +46,10 @@ public class GameController : MonoBehaviour {
 
             videoPlayerControllers[i].PrepareVideo(movieNames[i]);
         }
+
+#if ((UNITY_ANDROID && !UNITY_EDITOR) || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
+        videoPlayerControllers[0].PrepareVideos(movieNames);
+#endif
     }
 
     public void VidInitCompleted(string vidName) {
@@ -104,6 +110,11 @@ public class GameController : MonoBehaviour {
     }
 
     private void NextVideo() {
+
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        Debug.Log("Switching Video to");
+        videoPlayerControllers[currVidIndex].SwitchVideo();
+#else
         Debug.Log("VidIndex: " + currVidIndex + ", In location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PauseVideo();
         videoPlayerControllers[currVidIndex].StopVideo();
@@ -119,6 +130,7 @@ public class GameController : MonoBehaviour {
 
         Debug.Log("VidIndex: " + currVidIndex + ", Moving to location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PlayVideo();
+#endif
     }
 
     public void PlayBlinkEffect() {
@@ -130,12 +142,29 @@ public class GameController : MonoBehaviour {
             //StartCoroutine(CloseEyes(evt.moveTo, evt.closeTimeSpreader, evt.openTimeSpreader, evt.blinkWait));
             // StartCoroutine(CloseEyes(vidSphere2.transform, 1.1f, 6f, 0f));
 
-            StartCoroutine(CloseEyes(3f, 6f, 0f));
+            StartCoroutine(CloseEyes(3f, 6f, 1f));
             // TODO: disable blink effect when not in use ??
         }
     }
 
     private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
+        // Doing gradual Grayscale first
+        Debug.Log("Grad Grayscale!");
+        float minGray = 0.0f;
+        float maxGray = 1.0f;
+        float currGray = gradGrayEffect.rampOffset;
+        float grayTimeSpreader = 0.7f;
+
+        while (currGray > minGray) {
+            gradGrayEffect.rampOffset = Mathf.Lerp(minGray, maxGray, currGray);
+            currGray -= grayTimeSpreader * Time.deltaTime;
+            yield return null;
+        }
+
+        blinkEffect.maskValue = minGray;
+        // end - move to other method !!
+
+
         Debug.Log("CloseEyes!");
         float minMask = 0.0f;
         float maxMask = 1.3f;
@@ -163,6 +192,8 @@ public class GameController : MonoBehaviour {
     }
 
     private IEnumerator OpenEyes(float openTimeSpreader) {
+        gradGrayEffect.rampOffset = 1f;
+
         Debug.Log("OpenEyes!");
         float minMask = 0.0f;
         float maxMask = 1.3f;

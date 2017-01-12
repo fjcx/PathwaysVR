@@ -63,29 +63,29 @@ Implementation:
 
 ************************************************************************************/
 
-public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
+public class AndroidMoviePlayerBk : MonoBehaviour, IVideoPlayerController {
     //public string movieName = string.Empty;
     public bool videoPaused = false;
     private bool videoPausedBeforeAppPause = false;
 
-    //private string mediaFullPath = string.Empty;
+    private string mediaFullPath = string.Empty;
     private bool startedVideo = false;
 
     private GameController gameController;
-    //private string videoName;
-    private int currentVidIndex = 0;
-
-    private string[] videoNames = null;
-    private string[] mediaPaths = null;
+    private string videoName;
 
     private Boolean mediaSufaceInit = false;
 
+#if (UNITY_ANDROID && !UNITY_EDITOR)
 	private Texture2D nativeTexture = null;
 	private IntPtr	  nativeTexId = IntPtr.Zero;
 	private int		  textureWidth = 2880;
 	private int 	  textureHeight = 1440;
 	private AndroidJavaObject 	mediaPlayer = null;
-
+#else
+    private MovieTexture movieTexture = null;
+    private AudioSource audioEmitter = null;
+#endif
     private Renderer mediaRenderer = null;
 
     private enum MediaSurfaceEventType {
@@ -110,7 +110,9 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
         get { return _eventBase; }
         set {
             _eventBase = value;
+#if (UNITY_ANDROID && !UNITY_EDITOR)
 			OVR_Media_Surface_SetEventBase(_eventBase);
+#endif
         }
     }
     private static int _eventBase = 0;
@@ -126,38 +128,80 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
         gameController = FindObjectOfType<GameController>();
         Debug.Log("MovieSample Awake");
 
+#if UNITY_ANDROID && !UNITY_EDITOR
 		OVR_Media_Surface_Init();
-        mediaRenderer = GetComponent<Renderer>();
+#endif
 
+        mediaRenderer = GetComponent<Renderer>();
+#if !UNITY_ANDROID || UNITY_EDITOR
+        audioEmitter = GetComponent<AudioSource>();
+#endif
+        // moved to PrepVideo
+        /*if (mediaRenderer.material == null || mediaRenderer.material.mainTexture == null) {
+            Debug.LogError("No material for movie surface");
+        }
+
+        if (movieName != string.Empty) {
+            StartCoroutine(RetrieveStreamingAsset(movieName));
+        } else {
+            Debug.LogError("No media file name provided");
+        }*/
+
+        // moved to playVideo
+/*#if UNITY_ANDROID && !UNITY_EDITOR
+		nativeTexture = Texture2D.CreateExternalTexture(textureWidth, textureHeight,
+		                                                TextureFormat.RGBA32, true, false,
+		                                                IntPtr.Zero);
+
+		IssuePluginEvent(MediaSurfaceEventType.Initialize);
+#endif*/
     }
 
     /// <summary>
     /// Construct the streaming asset path.
     /// Note: For Android, we need to retrieve the data from the apk.
     /// </summary>
-    IEnumerator RetrieveStreamingAsset(string mediaFileName, int mpIndex) {
-        string streamingMediaPath = Application.streamingAssetsPath + "/" + mediaFileName;
-        string persistentPath = Application.persistentDataPath + "/" + mediaFileName;
-        if (!File.Exists(persistentPath)) {
-            WWW wwwReader = new WWW(streamingMediaPath);
-            yield return wwwReader;
+    IEnumerator RetrieveStreamingAsset(string mediaFileName) {
+#if UNITY_ANDROID && !UNITY_EDITOR
+		string streamingMediaPath = Application.streamingAssetsPath + "/" + mediaFileName;
+		string persistentPath = Application.persistentDataPath + "/" + mediaFileName;
+		if (!File.Exists(persistentPath))
+		{
+			WWW wwwReader = new WWW(streamingMediaPath);
+			yield return wwwReader;
 
-            if (wwwReader.error != null) {
-                Debug.LogError("wwwReader error: " + wwwReader.error);
-            }
+			if (wwwReader.error != null)
+			{
+				Debug.LogError("wwwReader error: " + wwwReader.error);
+			}
 
-            System.IO.File.WriteAllBytes(persistentPath, wwwReader.bytes);
+			System.IO.File.WriteAllBytes(persistentPath, wwwReader.bytes);
+		}
+		mediaFullPath = persistentPath;
+#else
+        //string mediaFileNameOgv = Path.GetFileNameWithoutExtension(mediaFileName) + ".ogv";
+        string mediaFileNameOgv = Path.GetFileNameWithoutExtension(mediaFileName) + ".ogg";
+        string streamingMediaPath = "file:///" + Application.streamingAssetsPath + "/" + mediaFileNameOgv;
+        WWW wwwReader = new WWW(streamingMediaPath);
+        yield return wwwReader;
+
+        if (wwwReader.error != null) {
+            Debug.LogError("wwwReader error: " + wwwReader.error);
         }
-        //mediaFullPath = persistentPath;
-        mediaPaths[mpIndex] = persistentPath;
-        Debug.Log("Movie FullPath: " + mediaPaths[mpIndex]);
+
+        movieTexture = wwwReader.movie;
+        mediaRenderer.material.mainTexture = movieTexture;
+        audioEmitter.clip = movieTexture.audioClip;
+        mediaFullPath = streamingMediaPath;
+#endif
+        Debug.Log("Movie FullPath: " + mediaFullPath);
 
         // Moved to PlayVideo
         SetPaused(true);
         // Video must start only after mediaFullPath is filled in
         //Debug.Log("MovieSample Start");
         //StartCoroutine(DelayedStartVideo());
-        gameController.VidInitCompleted(videoNames[mpIndex]);
+        gameController.VidInitCompleted(videoName); 
     }
 
     /// <summary>
@@ -170,13 +214,24 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
             Debug.Log("Mediasurface DelayedStartVideo");
 
             startedVideo = true;
-			mediaPlayer = StartVideoPlayerOnTextureId(textureWidth, textureHeight, mediaPaths[currentVidIndex]);
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+			mediaPlayer = StartVideoPlayerOnTextureId(textureWidth, textureHeight, mediaFullPath);
 			mediaRenderer.material.mainTexture = nativeTexture;
+#else
+            if (movieTexture != null && movieTexture.isReadyToPlay) {
+                movieTexture.Play();
+                if (audioEmitter != null) {
+                    audioEmitter.Play();
+                }
+            }
+#endif
         }
     }
 
     void Update() {
         if (mediaSufaceInit == true) {
+        
+#if (UNITY_ANDROID && !UNITY_EDITOR)
             if (!videoPaused) {
                 IntPtr currTexId = OVR_Media_Surface_GetNativeTexture();
                 if (currTexId != nativeTexId)
@@ -187,10 +242,21 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
                 IssuePluginEvent(MediaSurfaceEventType.Update);
             }
+#else
+            if (movieTexture != null) {
+                if (movieTexture.isReadyToPlay != movieTexture.isPlaying && !videoPaused) {
+                    movieTexture.Play();
+                    if (audioEmitter != null) {
+                        audioEmitter.Play();
+                    }
+                }
+            }
+#endif
         }
     }
 
     public void Rewind() {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
         if (mediaPlayer != null)
         {
             try
@@ -202,10 +268,19 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 				Debug.Log("Failed to stop mediaPlayer with message " + e.Message);
 			}
         }
+#else
+        if (movieTexture != null) {
+            movieTexture.Stop();
+            if (audioEmitter != null) {
+                audioEmitter.Stop();
+            }
+        }
+#endif
     }
 
     public void SetPaused(bool wasPaused) {
         Debug.Log("SetPaused: " + wasPaused);
+#if (UNITY_ANDROID && !UNITY_EDITOR)
 		if (mediaPlayer != null)
 		{
 			videoPaused = wasPaused;
@@ -218,6 +293,22 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 				Debug.Log("Failed to start/pause mediaPlayer with message " + e.Message);
 			}
 		}
+#else
+        if (movieTexture != null) {
+            videoPaused = wasPaused;
+            if (videoPaused) {
+                movieTexture.Pause();
+                if (audioEmitter != null) {
+                    audioEmitter.Pause();
+                }
+            } else {
+                movieTexture.Play();
+                if (audioEmitter != null) {
+                    audioEmitter.Play();
+                }
+            }
+        }
+#endif
     }
 
     /// <summary>
@@ -236,38 +327,43 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
     }
 
     private void OnDestroy() {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
         Debug.Log("Shutting down video");
 		// This will trigger the shutdown on the render thread
 		IssuePluginEvent(MediaSurfaceEventType.Shutdown);
         mediaPlayer.Call("stop");
         mediaPlayer.Call("release");
         mediaPlayer = null;
+#endif
     }
 
     public void PlayVideo() {
         Debug.Log("Play Video");
+#if UNITY_ANDROID && !UNITY_EDITOR
 		nativeTexture = Texture2D.CreateExternalTexture(textureWidth, textureHeight,
 		                                                TextureFormat.RGBA32, true, false,
 		                                                IntPtr.Zero);
 
 		IssuePluginEvent(MediaSurfaceEventType.Initialize);
+#endif
         mediaSufaceInit = true;
-
+        
         // Video must start only after mediaFullPath is filled in
         Debug.Log("MovieSample Start");
-        Debug.Log("PlayVid: " + this.videoNames[currentVidIndex] + ", In location: " + this.transform.position);
+        Debug.Log("PlayVid: " + this.videoName + ", In location: " + this.transform.position);
         Debug.Log("PlayVid ! , Camera Location: " + gameController.mainCamera.transform.position);
         StartCoroutine(DelayedStartVideo());
     }
 
     public void StopVideo() {
         mediaSufaceInit = false;
+#if (UNITY_ANDROID && !UNITY_EDITOR)
         Debug.Log("Shutting down video");
 		// This will trigger the shutdown on the render thread
 		IssuePluginEvent(MediaSurfaceEventType.Shutdown);
         mediaPlayer.Call("stop");
         mediaPlayer.Call("release");   
-
+#endif
         //mediaPlayer = null;
         //DestroyObject(this.gameObject);
     }
@@ -280,31 +376,9 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
         this.transform.position = newPos;
     }
 
-    public void PrepareVideos(string[] vidNames) {
-        this.mediaPaths = new string[vidNames.Length];
-        this.videoNames = new string[vidNames.Length];
-
-        for (int i = 0; i < vidNames.Length; i++) {
-            Debug.Log("Prep vid");
-            this.videoNames[i] = vidNames[i];
-            Debug.Log("PrepareVid: " + this.videoNames[i] + ", In location: " + this.transform.position);
-            Debug.Log("PrepareVid ! , Camera Location: " + gameController.mainCamera.transform.position);
-            if (mediaRenderer.material == null || mediaRenderer.material.mainTexture == null) {
-                Debug.LogError("No material for movie surface");
-            }
-
-            if (this.videoNames[i] != string.Empty) {
-                StartCoroutine(RetrieveStreamingAsset(this.videoNames[i], i));
-            } else {
-                Debug.LogError("No media file name provided");
-            }
-        }
-    }
-
     public void PrepareVideo(string vidName) {
-        // Not Implemented here !!!
-
-        /*Debug.Log("Prep vid");
+        
+        Debug.Log("Prep vid");
         this.videoName = vidName;
         Debug.Log("PrepareVid: " + this.videoName + ", In location: " + this.transform.position);
         Debug.Log("PrepareVid ! , Camera Location: " + gameController.mainCamera.transform.position);
@@ -316,26 +390,31 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
             StartCoroutine(RetrieveStreamingAsset(vidName));
         } else {
             Debug.LogError("No media file name provided");
-        }*/
+        }
     }
 
     public string GetVidName() {
-        return this.videoNames[currentVidIndex];
+        return this.videoName;
     }
 
     public void SwitchVideo() {
+        /*string mPath = Application.persistentDataPath + "/" + newMediaPath;
+#if (UNITY_ANDROID && !UNITY_EDITOR)
         mediaPlayer.Call("stop");
         mediaPlayer.Call("reset");
-
-        currentVidIndex++;
-        string mPath = mediaPaths[currentVidIndex];
 
         mediaPlayer.Call("setDataSource", mPath);
 		mediaPlayer.Call("prepare");
 		mediaPlayer.Call("setLooping", true);
 		mediaPlayer.Call("start");
+#endif*/
     }
 
+    public void PrepareVideos(string[] vidNames) {
+        throw new NotImplementedException();
+    }
+
+#if (UNITY_ANDROID && !UNITY_EDITOR)
 	/// <summary>
 	/// Set up the video player with the movie surface texture id.
 	/// </summary>
@@ -370,7 +449,9 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
 		return mediaPlayer;
 	}
+#endif
 
+#if (UNITY_ANDROID && !UNITY_EDITOR)
 	[DllImport("OculusMediaSurface")]
 	private static extern void OVR_Media_Surface_Init();
 
@@ -391,4 +472,5 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
 	[DllImport("OculusMediaSurface")]
 	private static extern void OVR_Media_Surface_SetTextureParms(int texWidth, int texHeight);
+#endif
 }
