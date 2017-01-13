@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour {
     public GameObject mainCamera;
     public GameObject desktopVidPlayerPrefab;
     public GameObject androidVidPlayerPrefab;
+    public GvrAudioSoundfield gvrAudioSoundfield;
 
     public string[] movieNames;
 
@@ -50,6 +51,8 @@ public class GameController : MonoBehaviour {
 #if ((UNITY_ANDROID && !UNITY_EDITOR) || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
         videoPlayerControllers[0].PrepareVideos(movieNames);
 #endif
+
+         gvrAudioSoundfield.PlayScheduled(0);
     }
 
     public void VidInitCompleted(string vidName) {
