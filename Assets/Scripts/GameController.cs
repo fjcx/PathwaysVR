@@ -24,6 +24,7 @@ public class GameController : MonoBehaviour {
     public GameObject mainCamera;
     public GameObject desktopVidPlayerPrefab;
     public GameObject androidVidPlayerPrefab;
+    public GameObject osxVidPlayerPrefab;
     public GvrAudioSoundfield gvrAudioSoundfield;
 
     public string[] movieNames;
@@ -36,10 +37,12 @@ public class GameController : MonoBehaviour {
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
         for (int i = 0; i < movieNames.Length; i++) {
 
-#if ((UNITY_ANDROID && !UNITY_EDITOR) || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
+#if (UNITY_ANDROID && !UNITY_EDITOR)
             currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
             Debug.Log("Instantiate ! :VidIndex: " + i + ", In location: " + currVidPlayer.transform.position);
             Debug.Log("Instantiate ! , currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
+#elif (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
+            currVidPlayer = Instantiate(osxVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
 #else
             currVidPlayer = Instantiate(desktopVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
 #endif
@@ -48,7 +51,7 @@ public class GameController : MonoBehaviour {
             videoPlayerControllers[i].PrepareVideo(movieNames[i]);
         }
 
-#if ((UNITY_ANDROID && !UNITY_EDITOR) || UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
+#if (UNITY_ANDROID && !UNITY_EDITOR)
         videoPlayerControllers[0].PrepareVideos(movieNames);
 #endif
 
@@ -113,7 +116,7 @@ public class GameController : MonoBehaviour {
     }
 
     private void NextVideo() {
-
+        Debug.Log("GameController: NextVideo()");
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         Debug.Log("Switching Video to");
         videoPlayerControllers[currVidIndex].SwitchVideo();
@@ -145,13 +148,12 @@ public class GameController : MonoBehaviour {
             //StartCoroutine(CloseEyes(evt.moveTo, evt.closeTimeSpreader, evt.openTimeSpreader, evt.blinkWait));
             // StartCoroutine(CloseEyes(vidSphere2.transform, 1.1f, 6f, 0f));
 
-            StartCoroutine(CloseEyes(3f, 6f, 1f));
+            StartCoroutine(GradualGrayScale());
             // TODO: disable blink effect when not in use ??
         }
     }
 
-    private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
-        // Doing gradual Grayscale first
+    private IEnumerator GradualGrayScale() {
         Debug.Log("Grad Grayscale!");
         float minGray = 0.0f;
         float maxGray = 1.0f;
@@ -165,8 +167,11 @@ public class GameController : MonoBehaviour {
         }
 
         blinkEffect.maskValue = minGray;
-        // end - move to other method !!
 
+        StartCoroutine(CloseEyes(3f, 6f, 1f));
+    }
+
+    private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
 
         Debug.Log("CloseEyes!");
         float minMask = 0.0f;

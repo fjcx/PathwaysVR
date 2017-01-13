@@ -232,7 +232,7 @@ Transform:
     type: 2}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 8}
-  m_LocalRotation: {x: 0, y: -0.5, z: 0, w: 0.8660254}
+  m_LocalRotation: {x: 0, y: -0.46174863, z: 0, w: 0.8870109}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -240,7 +240,7 @@ Transform:
   - {fileID: 11}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: -60, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -55, z: 0}
 --- !u!4 &15
 Transform:
   m_ObjectHideFlags: 0
@@ -781,6 +781,8 @@ MonoBehaviour:
   desktopVidPlayerPrefab: {fileID: 1969473224563182, guid: 39e1a5ed5d97de549b5dc17b764db8bf,
     type: 2}
   androidVidPlayerPrefab: {fileID: 1511672128459476, guid: c0f767cefa427a14e8ededa97a627029,
+    type: 2}
+  osxVidPlayerPrefab: {fileID: 1511672128459476, guid: 3655d14001586fe40af94663c1cf057d,
     type: 2}
   gvrAudioSoundfield: {fileID: 1684907806}
   movieNames:
