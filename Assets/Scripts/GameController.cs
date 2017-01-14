@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour {
 
     private BlinkEffect blinkEffect;
     private GradualGrayScaleEffect gradGrayEffect;
+    private FadeEffect fadeEffect;
     private bool canBlink = true;
     private bool cancelSelection = true;
     private bool cancelBlink = false;
@@ -33,6 +34,7 @@ public class GameController : MonoBehaviour {
     void Start() {
         blinkEffect = mainCamera.GetComponent<BlinkEffect>();
         gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
+        fadeEffect = mainCamera.GetComponent<FadeEffect>();
         showRecticleDot();
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
         for (int i = 0; i < movieNames.Length; i++) {
@@ -54,7 +56,6 @@ public class GameController : MonoBehaviour {
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         videoPlayerControllers[0].PrepareVideos(movieNames);
 #endif
-
          gvrAudioSoundfield.PlayScheduled(0);
     }
 
@@ -68,7 +69,7 @@ public class GameController : MonoBehaviour {
     public void showRecticleDot() {
         reticleSelection.enabled = false;
         reticleBackground.enabled = false;
-        reticleDot.enabled = true;
+        reticleDot.enabled = false;
     }
 
     public void CancelSelectionBar() {
@@ -140,6 +141,8 @@ public class GameController : MonoBehaviour {
     }
 
     public void PlayBlinkEffect() {
+        reticleDot.enabled = true;
+
         Debug.Log("Trying to Blink");
         if (canBlink && cancelBlink == false) {
             canBlink = false;   // don't allow any blinking commands while in motion!!
@@ -148,7 +151,10 @@ public class GameController : MonoBehaviour {
             //StartCoroutine(CloseEyes(evt.moveTo, evt.closeTimeSpreader, evt.openTimeSpreader, evt.blinkWait));
             // StartCoroutine(CloseEyes(vidSphere2.transform, 1.1f, 6f, 0f));
 
-            StartCoroutine(GradualGrayScale());
+            //StartCoroutine(GradualGrayScale());
+            //StartCoroutine(CloseEyes(3f, 6f, 1f));
+            StartCoroutine(FadeOut(3f, 6f, 1f));
+            
             // TODO: disable blink effect when not in use ??
         }
     }
@@ -168,7 +174,47 @@ public class GameController : MonoBehaviour {
 
         blinkEffect.maskValue = minGray;
 
-        StartCoroutine(CloseEyes(3f, 6f, 1f));
+        //StartCoroutine(CloseEyes(3f, 6f, 1f));
+    }
+
+    private IEnumerator FadeOut(float closeTimeSpreader, float openTimeSpreader, float fadeWait) {
+        Debug.Log("FadeOut!");
+        float minMask = 0.0f;
+        float maxMask = 1.0f;
+        float currMask = fadeEffect.rampOffset;
+
+        while (currMask > minMask && cancelBlink == false) {
+            fadeEffect.rampOffset = Mathf.Lerp(minMask, maxMask, currMask);
+            currMask -= closeTimeSpreader * Time.deltaTime;
+            yield return null;
+        }
+
+        fadeEffect.rampOffset = minMask;
+
+        if (cancelBlink == false) {
+            NextVideo();
+        }
+
+        yield return new WaitForSeconds(fadeWait);
+        StartCoroutine(FadeIn(openTimeSpreader));
+    }
+
+    private IEnumerator FadeIn(float openTimeSpreader) {
+        Debug.Log("FadeIn!");
+        float minMask = 0.0f;
+        float maxMask = 1.0f;
+        float currMask = minMask;
+
+        while (currMask < maxMask) {
+            fadeEffect.rampOffset = Mathf.Lerp(minMask, maxMask, currMask);
+            currMask += openTimeSpreader * Time.deltaTime;
+            yield return null;
+        }
+
+        canBlink = true;
+        cancelBlink = false;
+        Debug.Log("FadeIn, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
+        reticleDot.enabled = false;
     }
 
     private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
@@ -217,5 +263,6 @@ public class GameController : MonoBehaviour {
         canBlink = true;
         cancelBlink = false;
         Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
+        reticleDot.enabled = false;
     }
 }
