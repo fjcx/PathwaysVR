@@ -35,14 +35,22 @@ public class GameController : MonoBehaviour {
         blinkEffect = mainCamera.GetComponent<BlinkEffect>();
         gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
         fadeEffect = mainCamera.GetComponent<FadeEffect>();
-        showRecticleDot();
+        showRecticleDot();  // disables outer rectile elements
+        hideRecticleDot(true);
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
-        for (int i = 0; i < movieNames.Length; i++) {
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
-            currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
-            Debug.Log("Instantiate ! :VidIndex: " + i + ", In location: " + currVidPlayer.transform.position);
+        if (movieNames.Length > 0) {
+            // only 1 player created for android !!
+            currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+            Debug.Log("Instantiate ! :VidIndex: 0, In location: " + currVidPlayer.transform.position);
             Debug.Log("Instantiate ! , currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
+        }
+#endif
+
+        for (int i = 0; i < movieNames.Length; i++) {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+            // moved to above
 #elif (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
             currVidPlayer = Instantiate(osxVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
 #else
@@ -69,7 +77,11 @@ public class GameController : MonoBehaviour {
     public void showRecticleDot() {
         reticleSelection.enabled = false;
         reticleBackground.enabled = false;
-        reticleDot.enabled = false;
+        reticleDot.enabled = true;
+    }
+
+    public void hideRecticleDot(bool isHidden) {
+        this.reticleDot.enabled = !isHidden;
     }
 
     public void CancelSelectionBar() {
@@ -141,7 +153,7 @@ public class GameController : MonoBehaviour {
     }
 
     public void PlayBlinkEffect() {
-        reticleDot.enabled = true;
+        //reticleDot.enabled = true;
 
         Debug.Log("Trying to Blink");
         if (canBlink && cancelBlink == false) {
@@ -214,7 +226,7 @@ public class GameController : MonoBehaviour {
         canBlink = true;
         cancelBlink = false;
         Debug.Log("FadeIn, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
-        reticleDot.enabled = false;
+        //reticleDot.enabled = false;
     }
 
     private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
@@ -263,6 +275,6 @@ public class GameController : MonoBehaviour {
         canBlink = true;
         cancelBlink = false;
         Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
-        reticleDot.enabled = false;
+        //reticleDot.enabled = false;
     }
 }

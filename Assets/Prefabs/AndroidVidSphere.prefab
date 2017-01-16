@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4784223239612110}
   - component: {fileID: 33328296872739296}
   - component: {fileID: 23159596757638014}
-  - component: {fileID: 114168586549109334}
+  - component: {fileID: 114507076107269728}
   - component: {fileID: 82201658780752272}
   - component: {fileID: 114484861734808020}
   m_Layer: 0
@@ -57,7 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 9bf5ce6e82ecdec43ac9af4a934a5f0f, type: 2}
+  - {fileID: 2100000, guid: a1066c4ba9ffc104b845edb0d7fb8eed, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -162,7 +162,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114168586549109334
+--- !u!114 &114484861734808020
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1511672128459476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e480d247f267c1647bf79aa804df4c60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  videoPaused: 0
+--- !u!114 &114507076107269728
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -178,15 +190,3 @@ MonoBehaviour:
   Radius: 10
   frontFaceType: 0
   textureOrigin: 0
---- !u!114 &114484861734808020
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1511672128459476}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e480d247f267c1647bf79aa804df4c60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  videoPaused: 0
