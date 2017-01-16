@@ -82,10 +82,11 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
 	private Texture2D nativeTexture = null;
 	private IntPtr	  nativeTexId = IntPtr.Zero;
-    //private int		  textureWidth = 2880;
-    //private int 	  textureHeight = 1440;
-    private int         textureWidth = 3840;
-    private int 	    textureHeight = 1920;
+    private int		  textureWidth = 2880;
+    private int 	  textureHeight = 1440;
+    //private int         textureWidth = 3840;
+    //private int 	    textureHeight = 1920;
+    
     private AndroidJavaObject 	mediaPlayer = null;
 
     private Renderer mediaRenderer = null;
@@ -192,7 +193,7 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
         nativeTexture = Texture2D.CreateExternalTexture(textureWidth, textureHeight, TextureFormat.RGBA32, true, false, IntPtr.Zero);
 
         IssuePluginEvent(MediaSurfaceEventType.Initialize);
-        //mediaSufaceInit = true;
+        mediaSufaceInit = true;
 
         // Video must start only after mediaFullPath is filled in
         Debug.Log("PlayVid: " + this.videoNames[currentVidIndex] + ", In location: " + this.transform.position);
@@ -212,8 +213,6 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
             Debug.Log("DelayedStart: texWidth: "+ textureWidth + ", texheight: " + textureHeight);
 			mediaPlayer = StartVideoPlayerOnTextureId(textureWidth, textureHeight, mediaPaths[currentVidIndex]);
 			mediaRenderer.material.mainTexture = nativeTexture;
-
-            mediaSufaceInit = true;
         }
     }
 
