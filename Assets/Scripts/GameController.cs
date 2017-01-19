@@ -7,8 +7,8 @@ using UnityEngine.Events;
 
 public class GameController : MonoBehaviour {
 
-    private BlinkEffect blinkEffect;
-    private GradualGrayScaleEffect gradGrayEffect;
+    //private BlinkEffect blinkEffect;
+    //private GradualGrayScaleEffect gradGrayEffect;
     private FadeEffect fadeEffect;
     private bool canBlink = true;
     private bool cancelSelection = true;
@@ -32,8 +32,8 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        blinkEffect = mainCamera.GetComponent<BlinkEffect>();
-        gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
+        //blinkEffect = mainCamera.GetComponent<BlinkEffect>();
+        //gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
         fadeEffect = mainCamera.GetComponent<FadeEffect>();
         showRecticleDot();  // disables outer rectile elements
         hideRecticleDot(true);
@@ -158,7 +158,7 @@ public class GameController : MonoBehaviour {
         Debug.Log("Trying to Blink");
         if (canBlink && cancelBlink == false) {
             canBlink = false;   // don't allow any blinking commands while in motion!!
-            blinkEffect.enabled = true;
+            //blinkEffect.enabled = true;
             //blinkEffect.enabled = evt.enable;
             //StartCoroutine(CloseEyes(evt.moveTo, evt.closeTimeSpreader, evt.openTimeSpreader, evt.blinkWait));
             // StartCoroutine(CloseEyes(vidSphere2.transform, 1.1f, 6f, 0f));
@@ -171,7 +171,7 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    private IEnumerator GradualGrayScale() {
+   /* private IEnumerator GradualGrayScale() {
         Debug.Log("Grad Grayscale!");
         float minGray = 0.0f;
         float maxGray = 1.0f;
@@ -187,9 +187,10 @@ public class GameController : MonoBehaviour {
         blinkEffect.maskValue = minGray;
 
         //StartCoroutine(CloseEyes(3f, 6f, 1f));
-    }
+    }*/
 
     private IEnumerator FadeOut(float closeTimeSpreader, float openTimeSpreader, float fadeWait) {
+        fadeEffect.enabled = true;
         Debug.Log("FadeOut!");
         float minMask = 0.0f;
         float maxMask = 1.0f;
@@ -227,9 +228,10 @@ public class GameController : MonoBehaviour {
         cancelBlink = false;
         Debug.Log("FadeIn, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
         //reticleDot.enabled = false;
+        fadeEffect.enabled = false;
     }
 
-    private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
+   /* private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
 
         Debug.Log("CloseEyes!");
         float minMask = 0.0f;
@@ -276,5 +278,5 @@ public class GameController : MonoBehaviour {
         cancelBlink = false;
         Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
         //reticleDot.enabled = false;
-    }
+    }*/
 }
