@@ -121,8 +121,9 @@ namespace HTC.UnityPlugin.Multimedia {
             this.transform.position = newPos;
         }
 
-        public void SwitchVideo() {
+        public int SwitchVideo() {
             // Not implemented
+            return 0;
         }
 
         public void PrepareVideos(string[] vidNames) {

@@ -397,7 +397,7 @@ public class MovieTexturePlayer : MonoBehaviour, IVideoPlayerController {
         return this.videoName;
     }
 
-    public void SwitchVideo() {
+    public int SwitchVideo() {
         /*string mPath = Application.persistentDataPath + "/" + newMediaPath;
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         mediaPlayer.Call("stop");
@@ -408,6 +408,7 @@ public class MovieTexturePlayer : MonoBehaviour, IVideoPlayerController {
 		mediaPlayer.Call("setLooping", true);
 		mediaPlayer.Call("start");
 #endif*/
+        return 0;
     }
 
     public void PrepareVideos(string[] vidNames) {

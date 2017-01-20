@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour {
     private int currVidIndex = 0;
     private IVideoPlayerController[] videoPlayerControllers;
 
+    public LobbyController lobbyController;
     public Image reticleDot;
     public Image reticleSelection;
     public Image reticleBackground;
@@ -35,8 +36,8 @@ public class GameController : MonoBehaviour {
         //blinkEffect = mainCamera.GetComponent<BlinkEffect>();
         //gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
         fadeEffect = mainCamera.GetComponent<FadeEffect>();
-        showRecticleDot();  // disables outer rectile elements
-        hideRecticleDot(true);
+        ShowReticleDot();  // disables outer rectile elements
+        //hideRecticleDot(true);
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
@@ -74,13 +75,14 @@ public class GameController : MonoBehaviour {
         }
     }
 
-    public void showRecticleDot() {
+    public void ShowReticleDot() {
         reticleSelection.enabled = false;
         reticleBackground.enabled = false;
         reticleDot.enabled = true;
     }
 
-    public void hideRecticleDot(bool isHidden) {
+    public void HideReticleDot(bool isHidden) {
+        Debug.Log("Hide reticle:" + isHidden);
         this.reticleDot.enabled = !isHidden;
     }
 
@@ -118,7 +120,7 @@ public class GameController : MonoBehaviour {
         if (cancelSelection == false) {
             PlayBlinkEffect();
         } else {
-            showRecticleDot();
+            ShowReticleDot();
         }
     }
 
@@ -132,7 +134,12 @@ public class GameController : MonoBehaviour {
         Debug.Log("GameController: NextVideo()");
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         Debug.Log("Switching Video to");
-        videoPlayerControllers[currVidIndex].SwitchVideo();
+        int switchedIndex = videoPlayerControllers[currVidIndex].SwitchVideo();
+        if (switchedIndex == 0) {
+            lobbyController.ShowCredits();
+        } else if (switchedIndex == 1) {
+            lobbyController.HideLobby();
+        }
 #else
         Debug.Log("VidIndex: " + currVidIndex + ", In location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PauseVideo();
@@ -142,6 +149,16 @@ public class GameController : MonoBehaviour {
         videoPlayerControllers[currVidIndex].MoveTo(new Vector3(-vidSphereDistance, 0, 0));
 
         currVidIndex++; // need null index check !!
+        if (currVidIndex >= videoPlayerControllers.Length) {
+            currVidIndex = 0;
+        }
+
+        if (currVidIndex == 0) {
+            lobbyController.ShowCredits();
+        } else if (currVidIndex == 1) {
+            lobbyController.HideLobby();
+        }
+
         // tmp
         videoPlayerControllers[currVidIndex].MoveTo(mainCamera.transform.position);
         // move camera to next sphere locataion

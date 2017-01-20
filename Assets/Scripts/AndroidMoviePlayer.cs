@@ -306,17 +306,21 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
         return this.videoNames[currentVidIndex];
     }
 
-    public void SwitchVideo() {
+    public int SwitchVideo() {
         mediaPlayer.Call("stop");
         mediaPlayer.Call("reset");
 
         currentVidIndex++;
+        if (currentVidIndex >= mediaPaths.Length) {
+            currentVidIndex = 0;
+        }
         string mPath = mediaPaths[currentVidIndex];
 
         mediaPlayer.Call("setDataSource", mPath);
 		mediaPlayer.Call("prepare");
 		mediaPlayer.Call("setLooping", true);
 		mediaPlayer.Call("start");
+        return currentVidIndex;
     }
 
 	/// <summary>

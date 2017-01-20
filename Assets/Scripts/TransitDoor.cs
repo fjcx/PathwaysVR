@@ -20,15 +20,15 @@ public class TransitDoor : MonoBehaviour {
     }
 
     private void HandleOver() {
-        Debug.Log("Over Door: ");
+        Debug.Log("Over Transit: ");
         //gameController.FillSelectionBar(3.0f);
         //gameController.PlayBlinkEffect();
-        gameController.hideRecticleDot(false);
+        gameController.HideReticleDot(false);
     }
 
     private void HandleOut() {
         //gameController.CancelSelectionBar();
         //gameController.CancelBlinkTransit();
-        gameController.hideRecticleDot(true);
+        gameController.HideReticleDot(true);
     }
 }

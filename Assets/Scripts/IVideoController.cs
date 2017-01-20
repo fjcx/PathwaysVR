@@ -12,5 +12,5 @@ public interface IVideoPlayerController {
     string GetVidName();
     void MoveTo(Vector3 newPos);
 
-    void SwitchVideo();
+    int SwitchVideo();
 }
