@@ -6,12 +6,13 @@ using VRStandardAssets.Utils;
 
 public class LobbyController : MonoBehaviour {
 
-    public Image playImage;
+    //public Image playImage;
     public Image infoImage;
-    public Image exitImage;
+    //public Image exitImage;
     public Image backImage;
     public GameObject lobbyObject;
     public GameObject creditsObject;
+    public GameObject lobbyCeliing;
     public GameObject imageSamplerObject;
     public GameController gameController;
 
@@ -28,16 +29,16 @@ public class LobbyController : MonoBehaviour {
     public float SelectionDuration { get { return m_SelectionDuration; } }
 
     private void Start() {
-        imageSamplerObject.SetActive(false);
+        imageSamplerObject.SetActive(true);
     }
 
     private void OnEnable() {
-        interactPlay.OnOver += HandleOverPlay;
-        interactPlay.OnOut += HandleOutPlay;
+        //interactPlay.OnOver += HandleOverPlay;
+        //interactPlay.OnOut += HandleOutPlay;
         interactInfo.OnOver += HandleOverInfo;
         interactInfo.OnOut += HandleOutInfo;
-        interactExit.OnOver += HandleOverExit;
-        interactExit.OnOut += HandleOutExit;
+        //interactExit.OnOver += HandleOverExit;
+        //interactExit.OnOut += HandleOutExit;
         interactBack.OnOver += HandleOverBack;
         interactBack.OnOut += HandleOutBack;
         interactCredits.OnOver += HandleOverCredits;
@@ -47,12 +48,12 @@ public class LobbyController : MonoBehaviour {
     }
 
     private void OnDisable() {
-        interactPlay.OnOver -= HandleOverPlay;
-        interactPlay.OnOut -= HandleOutPlay;
+        //interactPlay.OnOver -= HandleOverPlay;
+        //interactPlay.OnOut -= HandleOutPlay;
         interactInfo.OnOver -= HandleOverInfo;
         interactInfo.OnOut -= HandleOutInfo;
-        interactExit.OnOver -= HandleOverExit;
-        interactExit.OnOut -= HandleOutExit;
+        //interactExit.OnOver -= HandleOverExit;
+        //interactExit.OnOut -= HandleOutExit;
         interactBack.OnOver -= HandleOverBack;
         interactBack.OnOut -= HandleOutBack;
         interactCredits.OnOver -= HandleOverCredits;
@@ -61,13 +62,13 @@ public class LobbyController : MonoBehaviour {
         interactFrontWall.OnOut -= HandleOutFrontWall;
     }
 
-    private void HandleOverPlay() {
+    /*private void HandleOverPlay() {
         m_SelectionFillRoutine = StartCoroutine(FillSelectionRadial(playImage, "play"));
     }
 
     private void HandleOutPlay() {
         HandleUp(playImage);
-    }
+    }*/
 
     private void HandleOverInfo() {
         m_SelectionFillRoutine = StartCoroutine(FillSelectionRadial(infoImage, "info"));
@@ -77,13 +78,13 @@ public class LobbyController : MonoBehaviour {
         HandleUp(infoImage);
     }
 
-    private void HandleOverExit() {
+    /*private void HandleOverExit() {
         m_SelectionFillRoutine = StartCoroutine(FillSelectionRadial(exitImage, "exit"));
     }
 
     private void HandleOutExit() {
         HandleUp(exitImage);
-    }
+    }*/
 
     private void HandleOverBack() {
         m_SelectionFillRoutine = StartCoroutine(FillSelectionRadial(backImage, "back"));
@@ -174,7 +175,7 @@ public class LobbyController : MonoBehaviour {
     }
 
     public void ShowLobby() {
-        imageSamplerObject.SetActive(false);
+        imageSamplerObject.SetActive(true);
         lobbyObject.SetActive(true);
         gameController.HideReticleDot(false);
     }
