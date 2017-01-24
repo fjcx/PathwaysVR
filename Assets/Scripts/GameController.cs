@@ -28,16 +28,24 @@ public class GameController : MonoBehaviour {
     public GameObject androidVidPlayerPrefab;
     public GameObject osxVidPlayerPrefab;
     public GvrAudioSoundfield gvrAudioSoundfield;
+    public GameObject imageSamplerObject;
 
     public string[] movieNames;
+    public GameObject[] retVisibleAreas;
+    public float[] interactDelay;
+
+    public string blinkState = "none";
+
+    private AudioSource camAudioSource;
 
     // Use this for initialization
     void Start() {
         //blinkEffect = mainCamera.GetComponent<BlinkEffect>();
         //gradGrayEffect = mainCamera.GetComponent<GradualGrayScaleEffect>();
         fadeEffect = mainCamera.GetComponent<FadeEffect>();
+        camAudioSource = mainCamera.GetComponent<AudioSource>();
         ShowReticleDot();  // disables outer rectile elements
-        //hideRecticleDot(true);
+        HideReticleDot(true);
         videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
@@ -118,28 +126,26 @@ public class GameController : MonoBehaviour {
 
         reticleSelection.fillAmount = maxSel;
         if (cancelSelection == false) {
-            PlayBlinkEffect();
+            PlayBlinkEffect("fill");
         } else {
             ShowReticleDot();
         }
     }
 
-    public void CancelBlinkTransit() {
+    public void CancelBlinkTransit(string state) {
         if (canBlink == false) {
-            cancelBlink = true;
+            if (this.blinkState != "transit" || (this.blinkState == "transit" && state == "transit")) {
+                cancelBlink = true;
+            }
         }
     }
 
     private void NextVideo() {
         Debug.Log("GameController: NextVideo()");
+        int testIndex = 0;
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         Debug.Log("Switching Video to");
-        int switchedIndex = videoPlayerControllers[currVidIndex].SwitchVideo();
-        if (switchedIndex == 0) {
-            lobbyController.ShowCredits();
-        } else if (switchedIndex == 1) {
-            lobbyController.HideLobby();
-        }
+        testIndex = videoPlayerControllers[currVidIndex].SwitchVideo();
 #else
         Debug.Log("VidIndex: " + currVidIndex + ", In location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PauseVideo();
@@ -152,12 +158,7 @@ public class GameController : MonoBehaviour {
         if (currVidIndex >= videoPlayerControllers.Length) {
             currVidIndex = 0;
         }
-
-        if (currVidIndex == 0) {
-            lobbyController.ShowCredits();
-        } else if (currVidIndex == 1) {
-            lobbyController.HideLobby();
-        }
+        testIndex = currVidIndex;
 
         // tmp
         videoPlayerControllers[currVidIndex].MoveTo(mainCamera.transform.position);
@@ -165,13 +166,50 @@ public class GameController : MonoBehaviour {
         //mainCamera.transform.position = new Vector3(currVidIndex * vidSphereDistance, 0, 0);
 
         Debug.Log("VidIndex: " + currVidIndex + ", Moving to location: " + mainCamera.transform.position);
-        videoPlayerControllers[currVidIndex].PlayVideo();
+        videoPlayerControllers[currVidIndex].PlayVideo();        
 #endif
+        if (testIndex == 0) {
+            lobbyController.ShowCredits();
+        } else if (testIndex == 1) {
+            lobbyController.HideLobby();
+        }
+        // do null array length checks !!
+        // disable all transit areas
+        for (int i = 0; i < retVisibleAreas.Length; i++) {
+            retVisibleAreas[i].SetActive(false);
+        }
+        // enable the transit area for video after given delay
+        StartCoroutine(EnableAfterDelay(retVisibleAreas[testIndex], interactDelay[testIndex]));
+        resetCameraPos();
+        VidIndexAction(testIndex);
     }
 
-    public void PlayBlinkEffect() {
-        //reticleDot.enabled = true;
+    // put this in better place !!
+    private void VidIndexAction(int vidIndex) {
+        switch (vidIndex) {
+            case 0:
+                imageSamplerObject.SetActive(true);
+                break;
+            case 1:
+                imageSamplerObject.SetActive(false);
+                break;
+            case 2:
+                imageSamplerObject.SetActive(true);
+                break;
+            case 3:
+                imageSamplerObject.SetActive(false);
+                break;
+            case 4:
+                imageSamplerObject.SetActive(false);
+                break;
+            case 5:
+                imageSamplerObject.SetActive(false);
+                break;
+        }
+    }
 
+    public void PlayBlinkEffect(string state) {
+        //reticleDot.enabled = true;
         Debug.Log("Trying to Blink");
         if (canBlink && cancelBlink == false) {
             canBlink = false;   // don't allow any blinking commands while in motion!!
@@ -182,8 +220,8 @@ public class GameController : MonoBehaviour {
 
             //StartCoroutine(GradualGrayScale());
             //StartCoroutine(CloseEyes(3f, 6f, 1f));
+            this.blinkState = state;
             StartCoroutine(FadeOut(3f, 6f, 1f));
-            
             // TODO: disable blink effect when not in use ??
         }
     }
@@ -223,11 +261,14 @@ public class GameController : MonoBehaviour {
 
         if (cancelBlink == false) {
             NextVideo();
+            camAudioSource.Play();
         }
 
         yield return new WaitForSeconds(fadeWait);
         StartCoroutine(FadeIn(openTimeSpreader));
     }
+
+
 
     private IEnumerator FadeIn(float openTimeSpreader) {
         Debug.Log("FadeIn!");
@@ -246,54 +287,65 @@ public class GameController : MonoBehaviour {
         Debug.Log("FadeIn, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
         //reticleDot.enabled = false;
         fadeEffect.enabled = false;
+        HideReticleDot(true);
+        this.blinkState = "none";
     }
 
-   /* private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
-
-        Debug.Log("CloseEyes!");
-        float minMask = 0.0f;
-        float maxMask = 1.3f;
-        float currMask = minMask;
-
-        while (currMask < maxMask && cancelBlink == false) {
-            blinkEffect.maskValue = Mathf.Lerp(minMask, maxMask, currMask);
-            currMask += closeTimeSpreader * Time.deltaTime;
-            yield return null;
-        }
-
-        //blinkEffect.maskValue = maxMask;
-
-        if (cancelBlink == false) {
-            NextVideo();
-            //EventController.Instance.Publish(new TeleportPlayerEvent(moveTo));
-            //movePlayerTo(moveTo);
-            //clearSphere();
-            //movePlayerToNextVidSphere(true);        // TODO: can set to dark world
-            //vidController.nextVideo();
-        }
-
-        yield return new WaitForSeconds(blinkWait);
-        StartCoroutine(OpenEyes(openTimeSpreader));
+    private void resetCameraPos() {
+        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.localEulerAngles.x, 0, mainCamera.transform.localEulerAngles.z);
     }
 
-    private IEnumerator OpenEyes(float openTimeSpreader) {
-        gradGrayEffect.rampOffset = 1f;
+    IEnumerator EnableAfterDelay(GameObject toEnable, float delayInSeconds) {
+        yield return new WaitForSeconds(delayInSeconds);
+        toEnable.SetActive(true);
+    }
 
-        Debug.Log("OpenEyes!");
-        float minMask = 0.0f;
-        float maxMask = 1.3f;
-        float currMask = blinkEffect.maskValue;
+    /* private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
 
-        while (currMask > minMask) {
-            blinkEffect.maskValue = Mathf.Lerp(minMask, maxMask, currMask);
-            currMask -= openTimeSpreader * Time.deltaTime;
-            yield return null;
-        }
+         Debug.Log("CloseEyes!");
+         float minMask = 0.0f;
+         float maxMask = 1.3f;
+         float currMask = minMask;
 
-        blinkEffect.maskValue = minMask;
-        canBlink = true;
-        cancelBlink = false;
-        Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
-        //reticleDot.enabled = false;
-    }*/
+         while (currMask < maxMask && cancelBlink == false) {
+             blinkEffect.maskValue = Mathf.Lerp(minMask, maxMask, currMask);
+             currMask += closeTimeSpreader * Time.deltaTime;
+             yield return null;
+         }
+
+         //blinkEffect.maskValue = maxMask;
+
+         if (cancelBlink == false) {
+             NextVideo();
+             //EventController.Instance.Publish(new TeleportPlayerEvent(moveTo));
+             //movePlayerTo(moveTo);
+             //clearSphere();
+             //movePlayerToNextVidSphere(true);        // TODO: can set to dark world
+             //vidController.nextVideo();
+         }
+
+         yield return new WaitForSeconds(blinkWait);
+         StartCoroutine(OpenEyes(openTimeSpreader));
+     }
+
+     private IEnumerator OpenEyes(float openTimeSpreader) {
+         gradGrayEffect.rampOffset = 1f;
+
+         Debug.Log("OpenEyes!");
+         float minMask = 0.0f;
+         float maxMask = 1.3f;
+         float currMask = blinkEffect.maskValue;
+
+         while (currMask > minMask) {
+             blinkEffect.maskValue = Mathf.Lerp(minMask, maxMask, currMask);
+             currMask -= openTimeSpreader * Time.deltaTime;
+             yield return null;
+         }
+
+         blinkEffect.maskValue = minMask;
+         canBlink = true;
+         cancelBlink = false;
+         Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
+         //reticleDot.enabled = false;
+     }*/
 }

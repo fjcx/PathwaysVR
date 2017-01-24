@@ -111,11 +111,11 @@ public class ImageSampler : MonoBehaviour {
 
     private void HandleOver() {
         Debug.Log("Over RedSurface: ");
-        gameController.PlayBlinkEffect();
+        gameController.PlayBlinkEffect("sampler");
     }
 
     private void HandleOut() {
-        gameController.CancelBlinkTransit();
+        gameController.CancelBlinkTransit("sampler");
     }
 
     public static string ScreenShotName(int width, int height) {

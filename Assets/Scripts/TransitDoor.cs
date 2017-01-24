@@ -22,13 +22,13 @@ public class TransitDoor : MonoBehaviour {
     private void HandleOver() {
         Debug.Log("Over Transit: ");
         //gameController.FillSelectionBar(3.0f);
-        //gameController.PlayBlinkEffect();
+        gameController.PlayBlinkEffect("transit");
         gameController.HideReticleDot(false);
     }
 
     private void HandleOut() {
         //gameController.CancelSelectionBar();
-        //gameController.CancelBlinkTransit();
+        gameController.CancelBlinkTransit("transit");
         gameController.HideReticleDot(true);
     }
 }

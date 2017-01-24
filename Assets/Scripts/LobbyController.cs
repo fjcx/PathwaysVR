@@ -16,9 +16,9 @@ public class LobbyController : MonoBehaviour {
     public GameObject imageSamplerObject;
     public GameController gameController;
 
-    public VRInteractiveItem interactPlay;
+    //public VRInteractiveItem interactPlay;
     public VRInteractiveItem interactInfo;
-    public VRInteractiveItem interactExit;
+    //public VRInteractiveItem interactExit;
     public VRInteractiveItem interactBack;
     public VRInteractiveItem interactCredits;
     public VRInteractiveItem interactFrontWall;
@@ -95,7 +95,7 @@ public class LobbyController : MonoBehaviour {
     }
 
     private void HandleOverCredits() {
-        gameController.HideReticleDot(false);
+        //gameController.HideReticleDot(false);
     }
 
     private void HandleOutCredits() {
@@ -103,7 +103,7 @@ public class LobbyController : MonoBehaviour {
     }
 
     private void HandleOverFrontWall() {
-        gameController.HideReticleDot(false);
+        //gameController.HideReticleDot(false);
     }
 
     private void HandleOutFrontWall() {
@@ -153,7 +153,7 @@ public class LobbyController : MonoBehaviour {
     }
 
     private void PlayAction() {
-        gameController.PlayBlinkEffect();
+        gameController.PlayBlinkEffect("play");
     }
 
     private void InfoAction() {
@@ -171,18 +171,18 @@ public class LobbyController : MonoBehaviour {
     public void HideLobby() {
         lobbyObject.SetActive(false);
         imageSamplerObject.SetActive(true);
-        gameController.HideReticleDot(true);
+        //gameController.HideReticleDot(true);
     }
 
     public void ShowLobby() {
         imageSamplerObject.SetActive(true);
         lobbyObject.SetActive(true);
-        gameController.HideReticleDot(false);
+        //gameController.HideReticleDot(false);
     }
 
     public void ShowCredits() {
         ShowLobby();
         creditsObject.SetActive(true);
-        gameController.HideReticleDot(false);
+        //gameController.HideReticleDot(false);
     }
 }

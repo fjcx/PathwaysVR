@@ -86,6 +86,8 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
     private int 	  textureHeight = 1440;
     //private int         textureWidth = 3840;
     //private int 	    textureHeight = 1920;
+
+    private int durationMs = 0;
     
     private AndroidJavaObject 	mediaPlayer = null;
 
@@ -226,6 +228,22 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
                 }
 
                 IssuePluginEvent(MediaSurfaceEventType.Update);
+
+                try {
+                    // inefficient !! -> use JNI callback instead!
+                    if (durationMs != 0)  {
+                        int positionMs = mediaPlayer.Call<int>("getCurrentPosition");
+                        if (positionMs >= (durationMs - 1000)) {
+                            int backToMs = durationMs - 6000;
+                            if (backToMs < 0) {
+                                backToMs = 0;
+                            }
+                            mediaPlayer.Call("seekTo", backToMs);
+                        }
+                    }
+                } catch (Exception e) {
+                    Debug.Log("Failed to loop 10sec back with message " + e.Message);
+                }
             }
         }
     }
@@ -318,8 +336,12 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
         mediaPlayer.Call("setDataSource", mPath);
 		mediaPlayer.Call("prepare");
-		mediaPlayer.Call("setLooping", true);
+		mediaPlayer.Call("setLooping", false);
 		mediaPlayer.Call("start");
+
+        Debug.Log("Getting duration");
+        durationMs = mediaPlayer.Call<int>("getDuration");
+        Debug.Log("duration: " + durationMs);
         return currentVidIndex;
     }
 
@@ -349,7 +371,11 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 			mediaPlayer.Call("prepare");
 			mediaPlayer.Call("setLooping", true);
 			mediaPlayer.Call("start");
-		} catch (Exception e) {
+
+            Debug.Log("Getting duration");
+            durationMs = mediaPlayer.Call<int>("getDuration");
+            Debug.Log("duration: " + durationMs);
+        } catch (Exception e) {
 			Debug.Log("Failed to start mediaPlayer with message " + e.Message);
 		}
 
