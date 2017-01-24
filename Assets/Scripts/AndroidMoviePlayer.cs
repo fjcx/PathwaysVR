@@ -233,12 +233,19 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
                     // inefficient !! -> use JNI callback instead!
                     if (durationMs != 0)  {
                         int positionMs = mediaPlayer.Call<int>("getCurrentPosition");
+                        // are we at end of video ?
                         if (positionMs >= (durationMs - 1000)) {
-                            int backToMs = durationMs - 6000;
-                            if (backToMs < 0) {
-                                backToMs = 0;
+                            if (currentVidIndex != 0) {
+                                Debug.Log("Force transition");
+                                gameController.PlayBlinkEffect("forced");
+                            } else {
+                                // jump back 9 seconds
+                                /*int backToMs = durationMs - 9000;
+                                if (backToMs < 0) {
+                                    backToMs = 0;
+                                }*/
+                                mediaPlayer.Call("seekTo", 0);
                             }
-                            mediaPlayer.Call("seekTo", backToMs);
                         }
                     }
                 } catch (Exception e) {

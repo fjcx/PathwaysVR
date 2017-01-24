@@ -28,7 +28,7 @@ public class TransitDoor : MonoBehaviour {
 
     private void HandleOut() {
         //gameController.CancelSelectionBar();
-        gameController.CancelBlinkTransit("transit");
-        gameController.HideReticleDot(true);
+        //gameController.CancelBlinkTransit("transit");
+        //gameController.HideReticleDot(false);
     }
 }
