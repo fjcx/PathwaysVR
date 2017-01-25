@@ -39,7 +39,7 @@ public class GameController : MonoBehaviour {
     private float gvrTargetVolume = 0;
     private int currAmbiAudioTrack = 0;
     public GvrAudioSoundfield[] gvrAudioSoundfields;
-
+    public int[] yRotations;
 
     // Use this for initialization
     void Start() {
@@ -188,7 +188,7 @@ public class GameController : MonoBehaviour {
         }
         // enable the transit area for video after given delay
         StartCoroutine(EnableAfterDelay(retVisibleAreas[testIndex], interactDelay[testIndex]));
-        //resetCameraPos();
+        resetCameraPos(testIndex);
         VidIndexAction(testIndex);
     }
 
@@ -211,6 +211,9 @@ public class GameController : MonoBehaviour {
                 imageSamplerObject.SetActive(false);
                 break;
             case 5:
+                imageSamplerObject.SetActive(false);
+                break;
+            case 6:
                 imageSamplerObject.SetActive(false);
                 break;
         }
@@ -330,8 +333,8 @@ public class GameController : MonoBehaviour {
         this.blinkState = "none";
     }
 
-    private void resetCameraPos() {
-        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.localEulerAngles.x, 0, mainCamera.transform.localEulerAngles.z);
+    private void resetCameraPos(int rotationIndex) {
+        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.localEulerAngles.x, yRotations[rotationIndex], mainCamera.transform.localEulerAngles.z);
     }
 
     IEnumerator EnableAfterDelay(GameObject toEnable, float delayInSeconds) {
