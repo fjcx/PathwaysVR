@@ -824,6 +824,7 @@ MonoBehaviour:
     type: 2}
   imageSamplerObject: {fileID: 5}
   blinkState: none
+  fadeDelayBetweenVideos: 6
   videoScenes:
   - videoName: Opening_Sequence_Final_Nadir_Stitched.mp4
     interactDelay: 3
@@ -2959,11 +2960,11 @@ Prefab:
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0102
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: 9c8ae74bbf537f74fa701600692ef0ad, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0304
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: 9c8ae74bbf537f74fa701600692ef0ad, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: playOnAwake
       value: 0
@@ -4320,11 +4321,11 @@ Prefab:
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0102
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: d57350313e194d2489b102d0913d9bbc, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0304
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: d57350313e194d2489b102d0913d9bbc, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: playOnAwake
       value: 0

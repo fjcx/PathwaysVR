@@ -18,6 +18,9 @@ public class GameController : MonoBehaviour {
     private int vidSphereDistance = 25;
     private int currVidIndex = 0;
     private IVideoPlayerController[] videoPlayerControllers;
+    private AudioSource camAudioSource;
+    private float gvrTargetVolume = 0;
+    private int currAmbiAudioTrack = 0;
 
     public LobbyController lobbyController;
     public Image reticleDot;
@@ -32,10 +35,7 @@ public class GameController : MonoBehaviour {
     //public string[] movieNames;
 
     public string blinkState = "none";
-
-    private AudioSource camAudioSource;
-    private float gvrTargetVolume = 0;
-    private int currAmbiAudioTrack = 0;
+    public float fadeDelayBetweenVideos = 3f;
     public VideoScene[] videoScenes;
 
     // Use this for initialization
@@ -46,16 +46,19 @@ public class GameController : MonoBehaviour {
         camAudioSource = mainCamera.GetComponent<AudioSource>();
         ShowReticleDot();  // disables outer rectile elements
         HideReticleDot(true);
-        videoPlayerControllers = new IVideoPlayerController[videoScenes.Length];
         gvrTargetVolume = videoScenes[currAmbiAudioTrack].soundField.volume;
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         if (videoScenes.Length > 0) {
+            videoPlayerControllers = new IVideoPlayerController[1];     // Android only supports creating one controller/player
             // only 1 player created for android !!
             currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             Debug.Log("Instantiate ! :VidIndex: 0, In location: " + currVidPlayer.transform.position);
             Debug.Log("Instantiate ! , currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
+            videoPlayerControllers[0] = currVidPlayer.GetComponent<IVideoPlayerController>();
         }
+#else
+        videoPlayerControllers = new IVideoPlayerController[videoScenes.Length];
 #endif
 
         for (int i = 0; i < videoScenes.Length; i++) {
@@ -63,12 +66,13 @@ public class GameController : MonoBehaviour {
             // moved to above
 #elif (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
             currVidPlayer = Instantiate(osxVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
+            videoPlayerControllers[i] = currVidPlayer.GetComponent<IVideoPlayerController>();
+            videoPlayerControllers[i].PrepareVideo(videoScenes[i].videoName);
 #else
             currVidPlayer = Instantiate(desktopVidPlayerPrefab, new Vector3(i * vidSphereDistance, 0, 0), Quaternion.identity);
-#endif
             videoPlayerControllers[i] = currVidPlayer.GetComponent<IVideoPlayerController>();
-
             videoPlayerControllers[i].PrepareVideo(videoScenes[i].videoName);
+#endif
         }
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
@@ -102,7 +106,6 @@ public class GameController : MonoBehaviour {
     public void CancelSelectionBar() {
         cancelSelection = true;
     }
-
 
     public void FillSelectionBar(float selectionTime) {
         Debug.Log("FillSelectionBar");
@@ -150,7 +153,7 @@ public class GameController : MonoBehaviour {
         int testIndex = 0;
 #if (UNITY_ANDROID && !UNITY_EDITOR)
         Debug.Log("Switching Video to");
-        testIndex = videoPlayerControllers[currVidIndex].SwitchVideo();
+        testIndex = videoPlayerControllers[0].SwitchVideo();
 #else
         Debug.Log("VidIndex: " + currVidIndex + ", In location: " + mainCamera.transform.position);
         videoPlayerControllers[currVidIndex].PauseVideo();
@@ -233,7 +236,7 @@ public class GameController : MonoBehaviour {
             //StartCoroutine(GradualGrayScale());
             //StartCoroutine(CloseEyes(3f, 6f, 1f));
             this.blinkState = state;
-            StartCoroutine(FadeOut(3f, 6f, 3f));
+            StartCoroutine(FadeOut(3f, 6f, 7f));
             StartCoroutine(FadeOutAmbiAudio(videoScenes[currAmbiAudioTrack].soundField, 3f));
             // TODO: disable blink effect when not in use ??
         }
@@ -268,23 +271,7 @@ public class GameController : MonoBehaviour {
         audioSoundField.volume = gvrTargetVolume;
     }
 
-    /* private IEnumerator GradualGrayScale() {
-         Debug.Log("Grad Grayscale!");
-         float minGray = 0.0f;
-         float maxGray = 1.0f;
-         float currGray = gradGrayEffect.rampOffset;
-         float grayTimeSpreader = 0.7f;
-
-         while (currGray > minGray) {
-             gradGrayEffect.rampOffset = Mathf.Lerp(minGray, maxGray, currGray);
-             currGray -= grayTimeSpreader * Time.deltaTime;
-             yield return null;
-         }
-
-         blinkEffect.maskValue = minGray;
-
-         //StartCoroutine(CloseEyes(3f, 6f, 1f));
-     }*/
+   
 
     private IEnumerator FadeOut(float closeTimeSpreader, float openTimeSpreader, float fadeWait) {
 
@@ -310,8 +297,6 @@ public class GameController : MonoBehaviour {
         yield return new WaitForSeconds(fadeWait);
         StartCoroutine(FadeIn(openTimeSpreader));
     }
-
-
 
     private IEnumerator FadeIn(float openTimeSpreader) {
         Debug.Log("FadeIn!");
@@ -391,4 +376,22 @@ public class GameController : MonoBehaviour {
          Debug.Log("OpenEyes, currind: " + currVidIndex + ", Camera Location: " + mainCamera.transform.position);
          //reticleDot.enabled = false;
      }*/
+
+    /* private IEnumerator GradualGrayScale() {
+        Debug.Log("Grad Grayscale!");
+        float minGray = 0.0f;
+        float maxGray = 1.0f;
+        float currGray = gradGrayEffect.rampOffset;
+        float grayTimeSpreader = 0.7f;
+
+        while (currGray > minGray) {
+            gradGrayEffect.rampOffset = Mathf.Lerp(minGray, maxGray, currGray);
+            currGray -= grayTimeSpreader * Time.deltaTime;
+            yield return null;
+        }
+
+        blinkEffect.maskValue = minGray;
+
+        //StartCoroutine(CloseEyes(3f, 6f, 1f));
+    }*/
 }

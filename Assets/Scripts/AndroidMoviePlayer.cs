@@ -174,7 +174,6 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
             if (wwwReader.error != null) {
                 Debug.LogError("wwwReader error: " + wwwReader.error);
             }
-
             System.IO.File.WriteAllBytes(persistentPath, wwwReader.bytes);
         }
         //mediaFullPath = persistentPath;

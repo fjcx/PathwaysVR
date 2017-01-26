@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 namespace VRStandardAssets.Utils
 {
@@ -30,6 +31,21 @@ namespace VRStandardAssets.Utils
 
         public bool IsFading { get { return m_IsFading; } }
 
+        private void OnEnable() {
+            SceneManager.sceneLoaded += OnLevelFinishedLoading;
+        }
+
+        void OnDisable() {
+            SceneManager.sceneLoaded -= OnLevelFinishedLoading;
+        }
+
+        void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode) {
+            // If applicable set the immediate colour to be faded out and then fade in.
+            if (m_FadeInOnSceneLoad) {
+                m_FadeImage.color = m_FadeColor;
+                FadeIn(true);
+            }
+        }
 
         private void Awake()
         {
@@ -47,18 +63,6 @@ namespace VRStandardAssets.Utils
                 FadeIn(true);
             }
         }
-
-
-        private void OnLevelWasLoaded()
-        {
-            // If applicable set the immediate colour to be faded out and then fade in.
-            if (m_FadeInOnSceneLoad)
-            {
-                m_FadeImage.color = m_FadeColor;
-                FadeIn(true);
-            }
-        }
-
         
         // Since no duration is specified with this overload use the default duration.
         public void FadeOut(bool fadeAudio)

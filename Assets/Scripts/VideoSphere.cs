@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class VideoSphere : MonoBehaviour {
 
-    private AudioSource audioSource;
+    //private AudioSource audioSource;
     private MoviePlayer moviePlayer;
 
     public bool useExternalAudioSources = false;
@@ -19,7 +19,7 @@ public class VideoSphere : MonoBehaviour {
     public void Awake()
     {
         moviePlayer = GetComponent<MoviePlayer>();
-        audioSource = GetComponent<AudioSource>();      // change when using external audio sources to reference those instead
+        //audioSource = GetComponent<AudioSource>();      // Using external audio sources instead
     }
 
     // Use this for initialization

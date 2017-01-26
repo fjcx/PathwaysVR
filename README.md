@@ -1,3 +1,3 @@
 # PathwaysVR
 ----
-Framework for Pathways 360 VR experience for GearVr and Oculus Rift.
+Framework for Pathways 360 VR experience for Gear VR and Oculus Rift.
