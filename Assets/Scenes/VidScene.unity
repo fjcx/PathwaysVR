@@ -405,7 +405,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 019376c882c802e468143e78e9383fc9, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 41a0c73998a2c674ab0e79759c0af8cb, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -826,32 +826,32 @@ MonoBehaviour:
   blinkState: none
   videoScenes:
   - videoName: Opening_Sequence_Final_Nadir_Stitched.mp4
-    interactDelay: 2
+    interactDelay: 3
     cameraYRotation: 0
     reticleVisibleArea: {fileID: 1319996417}
     soundField: {fileID: 1684907806}
   - videoName: Tunnel_Final_Nadir_Stitched.mp4
-    interactDelay: 0
+    interactDelay: 45
     cameraYRotation: 0
     reticleVisibleArea: {fileID: 794009329}
     soundField: {fileID: 299644051}
   - videoName: Lake_Final_Nadir_Stitched.mp4
-    interactDelay: 0
+    interactDelay: 45
     cameraYRotation: 0
     reticleVisibleArea: {fileID: 10}
     soundField: {fileID: 808692951}
   - videoName: Snowscape_Final_Nadir_Stitched.mp4
-    interactDelay: 0
+    interactDelay: 45
     cameraYRotation: 0
     reticleVisibleArea: {fileID: 1657961984}
     soundField: {fileID: 1246251370}
   - videoName: Stroller_Final_2880.mp4
-    interactDelay: 0
+    interactDelay: 45
     cameraYRotation: 0
     reticleVisibleArea: {fileID: 1744425000}
     soundField: {fileID: 2111300302}
   - videoName: Nursery_Final_Nadir_Stitched.mp4
-    interactDelay: 0
+    interactDelay: 45
     cameraYRotation: 0
     reticleVisibleArea: {fileID: 425658370}
     soundField: {fileID: 1473167379}
@@ -3268,11 +3268,11 @@ Prefab:
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0102
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: 9f56b89dc0cad324f962f7d89ef43a26, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0304
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: 9f56b89dc0cad324f962f7d89ef43a26, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: playOnAwake
       value: 0
@@ -3494,11 +3494,11 @@ Prefab:
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0102
       value: 
-      objectReference: {fileID: 8300000, guid: 81954464366b2cd44aa009c4319f07e0, type: 3}
+      objectReference: {fileID: 8300000, guid: b7ac9aa98c10c2a468648eccb7daf3c2, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0304
       value: 
-      objectReference: {fileID: 8300000, guid: 81954464366b2cd44aa009c4319f07e0, type: 3}
+      objectReference: {fileID: 8300000, guid: b7ac9aa98c10c2a468648eccb7daf3c2, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: playOnAwake
       value: 0
@@ -4496,11 +4496,11 @@ Prefab:
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0102
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: 6c4eb086cea11cc4db4e0e8a899c5859, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0304
       value: 
-      objectReference: {fileID: 8300000, guid: bdb52d15279679646baea5282a682662, type: 3}
+      objectReference: {fileID: 8300000, guid: 6c4eb086cea11cc4db4e0e8a899c5859, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: playOnAwake
       value: 0
