@@ -10,6 +10,7 @@ Assets/AssetStoreTools*
 UnityGenerated/
 TestVideos/*
 Assets/StreamingAssets/*.mp4
+Assets/Audio/*.aif
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #

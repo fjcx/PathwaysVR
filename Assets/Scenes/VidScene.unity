@@ -3494,11 +3494,11 @@ Prefab:
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0102
       value: 
-      objectReference: {fileID: 8300000, guid: b7ac9aa98c10c2a468648eccb7daf3c2, type: 3}
+      objectReference: {fileID: 8300000, guid: 5699450a387173a48a8392d18a8288c4, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: soundfieldClip0304
       value: 
-      objectReference: {fileID: 8300000, guid: b7ac9aa98c10c2a468648eccb7daf3c2, type: 3}
+      objectReference: {fileID: 8300000, guid: 5699450a387173a48a8392d18a8288c4, type: 3}
     - target: {fileID: 11469856, guid: 33b1331235def4618ab66fa8dad6d443, type: 2}
       propertyPath: playOnAwake
       value: 0
