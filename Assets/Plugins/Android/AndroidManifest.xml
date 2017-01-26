@@ -6,8 +6,6 @@
     android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0">
-  <!-- Network access needed for OVRMonitor - remove after testing! -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <supports-screens
         android:smallScreens="true"
         android:normalScreens="true"

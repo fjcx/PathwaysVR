@@ -823,40 +823,43 @@ MonoBehaviour:
   osxVidPlayerPrefab: {fileID: 1511672128459476, guid: 3655d14001586fe40af94663c1cf057d,
     type: 2}
   imageSamplerObject: {fileID: 5}
-  movieNames:
-  - Opening_Sequence_Final_2880.mp4
-  - Tunnel_Final_2880.mp4
-  - Lake_Final_2880.mp4
-  - Snowscape_Final_2880.mp4
-  - Stroller_Final_2880.mp4
-  - Nursery_Final.mp4
-  - Darkness.mp4
-  retVisibleAreas:
-  - {fileID: 1319996417}
-  - {fileID: 794009329}
-  - {fileID: 10}
-  - {fileID: 1657961984}
-  - {fileID: 1744425000}
-  - {fileID: 425658370}
-  - {fileID: 1648885993}
-  interactDelay:
-  - 2
-  - 45
-  - 45
-  - 45
-  - 45
-  - 45
-  - 0
   blinkState: none
-  gvrAudioSoundfields:
-  - {fileID: 1684907806}
-  - {fileID: 299644051}
-  - {fileID: 808692951}
-  - {fileID: 1246251370}
-  - {fileID: 2111300302}
-  - {fileID: 1473167379}
-  - {fileID: 1209458796}
-  yRotations: 00000000000000000000000000000000000000000000000000000000
+  videoScenes:
+  - videoName: Opening_Sequence_Final_Nadir_Stitched.mp4
+    interactDelay: 2
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 1319996417}
+    soundField: {fileID: 1684907806}
+  - videoName: Tunnel_Final_Nadir_Stitched.mp4
+    interactDelay: 0
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 794009329}
+    soundField: {fileID: 299644051}
+  - videoName: Lake_Final_Nadir_Stitched.mp4
+    interactDelay: 0
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 10}
+    soundField: {fileID: 808692951}
+  - videoName: Snowscape_Final_Nadir_Stitched.mp4
+    interactDelay: 0
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 1657961984}
+    soundField: {fileID: 1246251370}
+  - videoName: Stroller_Final_2880.mp4
+    interactDelay: 0
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 1744425000}
+    soundField: {fileID: 2111300302}
+  - videoName: Nursery_Final_Nadir_Stitched.mp4
+    interactDelay: 0
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 425658370}
+    soundField: {fileID: 1473167379}
+  - videoName: Darkness.mp4
+    interactDelay: 0
+    cameraYRotation: 0
+    reticleVisibleArea: {fileID: 1648885993}
+    soundField: {fileID: 1209458796}
 --- !u!114 &44
 MonoBehaviour:
   m_ObjectHideFlags: 0

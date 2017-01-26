@@ -29,17 +29,14 @@ public class GameController : MonoBehaviour {
     public GameObject osxVidPlayerPrefab;
     public GameObject imageSamplerObject;
 
-    public string[] movieNames;
-    public GameObject[] retVisibleAreas;
-    public float[] interactDelay;
+    //public string[] movieNames;
 
     public string blinkState = "none";
 
     private AudioSource camAudioSource;
     private float gvrTargetVolume = 0;
     private int currAmbiAudioTrack = 0;
-    public GvrAudioSoundfield[] gvrAudioSoundfields;
-    public int[] yRotations;
+    public VideoScene[] videoScenes;
 
     // Use this for initialization
     void Start() {
@@ -49,11 +46,11 @@ public class GameController : MonoBehaviour {
         camAudioSource = mainCamera.GetComponent<AudioSource>();
         ShowReticleDot();  // disables outer rectile elements
         HideReticleDot(true);
-        videoPlayerControllers = new IVideoPlayerController[movieNames.Length];
-        gvrTargetVolume = gvrAudioSoundfields[currAmbiAudioTrack].volume;
+        videoPlayerControllers = new IVideoPlayerController[videoScenes.Length];
+        gvrTargetVolume = videoScenes[currAmbiAudioTrack].soundField.volume;
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
-        if (movieNames.Length > 0) {
+        if (videoScenes.Length > 0) {
             // only 1 player created for android !!
             currVidPlayer = Instantiate(androidVidPlayerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             Debug.Log("Instantiate ! :VidIndex: 0, In location: " + currVidPlayer.transform.position);
@@ -61,7 +58,7 @@ public class GameController : MonoBehaviour {
         }
 #endif
 
-        for (int i = 0; i < movieNames.Length; i++) {
+        for (int i = 0; i < videoScenes.Length; i++) {
 #if (UNITY_ANDROID && !UNITY_EDITOR)
             // moved to above
 #elif (UNITY_EDITOR_OSX || UNITY_STANDALONE_OSX)
@@ -71,13 +68,17 @@ public class GameController : MonoBehaviour {
 #endif
             videoPlayerControllers[i] = currVidPlayer.GetComponent<IVideoPlayerController>();
 
-            videoPlayerControllers[i].PrepareVideo(movieNames[i]);
+            videoPlayerControllers[i].PrepareVideo(videoScenes[i].videoName);
         }
 
 #if (UNITY_ANDROID && !UNITY_EDITOR)
+        string[] movieNames = new string[videoScenes.Length];
+        for (int i = 0; i < videoScenes.Length; i++) {
+            movieNames[i] = videoScenes[i].videoName;
+        }
         videoPlayerControllers[0].PrepareVideos(movieNames);
 #endif
-        gvrAudioSoundfields[currAmbiAudioTrack].PlayScheduled(0);
+        videoScenes[currAmbiAudioTrack].soundField.PlayScheduled(0);
     }
 
     public void VidInitCompleted(string vidName) {
@@ -94,7 +95,7 @@ public class GameController : MonoBehaviour {
     }
 
     public void HideReticleDot(bool isHidden) {
-        Debug.Log("Hide reticle:" + isHidden);
+        //Debug.Log("Hide reticle:" + isHidden);
         this.reticleDot.enabled = !isHidden;
     }
 
@@ -173,8 +174,8 @@ public class GameController : MonoBehaviour {
         videoPlayerControllers[currVidIndex].PlayVideo();
 #endif
         currAmbiAudioTrack = testIndex;
-        gvrAudioSoundfields[currAmbiAudioTrack].PlayScheduled(0);
-        StartCoroutine(FadeInAmbiAudio(gvrAudioSoundfields[currAmbiAudioTrack], 6f));
+        videoScenes[currAmbiAudioTrack].soundField.PlayScheduled(0);
+        StartCoroutine(FadeInAmbiAudio(videoScenes[currAmbiAudioTrack].soundField, 6f));
 
         if (testIndex == 0) {
             lobbyController.ShowCredits();
@@ -183,11 +184,11 @@ public class GameController : MonoBehaviour {
         }
         // do null array length checks !!
         // disable all transit areas
-        for (int i = 0; i < retVisibleAreas.Length; i++) {
-            retVisibleAreas[i].SetActive(false);
+        for (int i = 0; i < videoScenes.Length; i++) {
+            videoScenes[i].reticleVisibleArea.SetActive(false);
         }
         // enable the transit area for video after given delay
-        StartCoroutine(EnableAfterDelay(retVisibleAreas[testIndex], interactDelay[testIndex]));
+        StartCoroutine(EnableAfterDelay(videoScenes[testIndex].reticleVisibleArea, videoScenes[testIndex].interactDelay));
         resetCameraPos(testIndex);
         VidIndexAction(testIndex);
     }
@@ -196,7 +197,7 @@ public class GameController : MonoBehaviour {
     private void VidIndexAction(int vidIndex) {
         switch (vidIndex) {
             case 0:
-                imageSamplerObject.SetActive(false);
+                imageSamplerObject.SetActive(true);
                 break;
             case 1:
                 imageSamplerObject.SetActive(false);
@@ -233,7 +234,7 @@ public class GameController : MonoBehaviour {
             //StartCoroutine(CloseEyes(3f, 6f, 1f));
             this.blinkState = state;
             StartCoroutine(FadeOut(3f, 6f, 3f));
-            StartCoroutine(FadeOutAmbiAudio(gvrAudioSoundfields[currAmbiAudioTrack], 3f));
+            StartCoroutine(FadeOutAmbiAudio(videoScenes[currAmbiAudioTrack].soundField, 3f));
             // TODO: disable blink effect when not in use ??
         }
     }
@@ -333,8 +334,8 @@ public class GameController : MonoBehaviour {
         this.blinkState = "none";
     }
 
-    private void resetCameraPos(int rotationIndex) {
-        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.localEulerAngles.x, yRotations[rotationIndex], mainCamera.transform.localEulerAngles.z);
+    private void resetCameraPos(int vidIndex) {
+        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.localEulerAngles.x, videoScenes[vidIndex].cameraYRotation, mainCamera.transform.localEulerAngles.z);
     }
 
     IEnumerator EnableAfterDelay(GameObject toEnable, float delayInSeconds) {

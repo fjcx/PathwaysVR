@@ -20,7 +20,7 @@ public class ReticleShownArea : MonoBehaviour {
     }
 
     private void HandleOver() {
-        Debug.Log("Over Transit: ");
+        //Debug.Log("Over Transit: ");
         //gameController.FillSelectionBar(3.0f);
         //gameController.PlayBlinkEffect();
         gameController.HideReticleDot(false);
