@@ -12,7 +12,11 @@ public class LobbyController : MonoBehaviour {
     public Image backImage;
     public GameObject lobbyObject;
     public GameObject creditsObject;
-    public GameObject lobbyCeliing;
+    public GameObject lobbyCeiling;
+    public GameObject lobbyRightWall;
+    public GameObject lobbyLeftWall;
+    public GameObject lobbyBackWall;
+    public GameObject lobbyFloor;
     public GameObject imageSamplerObject;
     public GameController gameController;
 
@@ -158,6 +162,7 @@ public class LobbyController : MonoBehaviour {
 
     private void InfoAction() {
         creditsObject.SetActive(true);
+
     }
 
     private void ExitAction() {
@@ -166,6 +171,11 @@ public class LobbyController : MonoBehaviour {
 
     private void BackAction() {
         creditsObject.SetActive(false);
+        lobbyCeiling.SetActive(false);
+        lobbyRightWall.SetActive(false);
+        lobbyLeftWall.SetActive(false);
+        lobbyFloor.SetActive(false);
+        lobbyBackWall.SetActive(false);
     }
 
     public void HideLobby() {
@@ -183,6 +193,11 @@ public class LobbyController : MonoBehaviour {
     public void ShowCredits() {
         ShowLobby();
         creditsObject.SetActive(true);
+        lobbyCeiling.SetActive(true);
+        lobbyRightWall.SetActive(true);
+        lobbyLeftWall.SetActive(true);
+        lobbyFloor.SetActive(true);
+        lobbyBackWall.SetActive(true);
         //gameController.HideReticleDot(false);
     }
 }

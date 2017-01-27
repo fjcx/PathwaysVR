@@ -46,9 +46,18 @@ namespace HTC.UnityPlugin.Multimedia {
             decoder.onInitComplete.AddListener(decoder.setPause);
             decoder.onInitComplete.AddListener(delegate { gameController.VidInitCompleted(videoName); });
             decoder.onInitComplete.AddListener(decoder.onInitComplete.RemoveAllListeners);
+            decoder.onVideoEnd.AddListener(delegate { gameController.OnMediaDecoderVidEnd(videoName); });
         }
 
         public void stopVideo() {
+            if (!isInitialized) {
+                Debug.Log(LOG_TAG + " not initialized.");
+                return;
+            }
+            decoder.stopDecoding();
+        }
+
+        public void OnVideoEnd() {
             if (!isInitialized) {
                 Debug.Log(LOG_TAG + " not initialized.");
                 return;
@@ -128,6 +137,10 @@ namespace HTC.UnityPlugin.Multimedia {
 
         public void PrepareVideos(string[] vidNames) {
             throw new NotImplementedException();
+        }
+
+        public void RotateVideo(int rotateY) {
+            // Not implemented
         }
     }
 }

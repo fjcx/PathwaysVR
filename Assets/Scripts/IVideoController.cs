@@ -13,4 +13,5 @@ public interface IVideoPlayerController {
     void MoveTo(Vector3 newPos);
 
     int SwitchVideo();
+    void RotateVideo(int rotateY);
 }

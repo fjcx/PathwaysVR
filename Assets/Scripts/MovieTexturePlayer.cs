@@ -415,6 +415,10 @@ public class MovieTexturePlayer : MonoBehaviour, IVideoPlayerController {
         throw new NotImplementedException();
     }
 
+    public void RotateVideo(int rotateY) {
+        // Not implemented
+    }
+
 #if (UNITY_ANDROID && !UNITY_EDITOR)
 	/// <summary>
 	/// Set up the video player with the movie surface texture id.

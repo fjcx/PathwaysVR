@@ -31,11 +31,12 @@ public class GameController : MonoBehaviour {
     public GameObject androidVidPlayerPrefab;
     public GameObject osxVidPlayerPrefab;
     public GameObject imageSamplerObject;
+    public GameObject retShownAreas;
 
     //public string[] movieNames;
 
     public string blinkState = "none";
-    public float fadeDelayBetweenVideos = 3f;
+    public float fadeDelayBetweenVideos = 0f;
     public VideoScene[] videoScenes;
 
     // Use this for initialization
@@ -192,7 +193,7 @@ public class GameController : MonoBehaviour {
         }
         // enable the transit area for video after given delay
         StartCoroutine(EnableAfterDelay(videoScenes[testIndex].reticleVisibleArea, videoScenes[testIndex].interactDelay));
-        resetCameraPos(testIndex);
+        //resetCameraPos(testIndex);
         VidIndexAction(testIndex);
     }
 
@@ -206,7 +207,7 @@ public class GameController : MonoBehaviour {
                 imageSamplerObject.SetActive(false);
                 break;
             case 2:
-                imageSamplerObject.SetActive(true);
+                imageSamplerObject.SetActive(false);
                 break;
             case 3:
                 imageSamplerObject.SetActive(false);
@@ -236,7 +237,7 @@ public class GameController : MonoBehaviour {
             //StartCoroutine(GradualGrayScale());
             //StartCoroutine(CloseEyes(3f, 6f, 1f));
             this.blinkState = state;
-            StartCoroutine(FadeOut(3f, 6f, 7f));
+            StartCoroutine(FadeOut(3f, 6f, fadeDelayBetweenVideos));
             StartCoroutine(FadeOutAmbiAudio(videoScenes[currAmbiAudioTrack].soundField, 3f));
             // TODO: disable blink effect when not in use ??
         }
@@ -271,13 +272,14 @@ public class GameController : MonoBehaviour {
         audioSoundField.volume = gvrTargetVolume;
     }
 
-   
+
 
     private IEnumerator FadeOut(float closeTimeSpreader, float openTimeSpreader, float fadeWait) {
-
         fadeEffect.enabled = true;
         Debug.Log("FadeOut!");
-        camAudioSource.Play();
+        if (currAmbiAudioTrack != 6) {    // i.e. last video fade (don't hardcode this)
+            camAudioSource.Play();
+        }
         float minMask = 0.0f;
         float maxMask = 1.0f;
         float currMask = fadeEffect.rampOffset;
@@ -299,6 +301,10 @@ public class GameController : MonoBehaviour {
     }
 
     private IEnumerator FadeIn(float openTimeSpreader) {
+#if (UNITY_ANDROID && !UNITY_EDITOR)
+        videoPlayerControllers[0].RotateVideo(videoScenes[currAmbiAudioTrack].cameraYRotation);
+        retShownAreas.transform.localRotation = Quaternion.Euler(retShownAreas.transform.eulerAngles.x, videoScenes[currAmbiAudioTrack].cameraYRotation, retShownAreas.transform.localEulerAngles.z);
+#endif
         Debug.Log("FadeIn!");
         float minMask = 0.0f;
         float maxMask = 1.0f;
@@ -320,7 +326,7 @@ public class GameController : MonoBehaviour {
     }
 
     private void resetCameraPos(int vidIndex) {
-        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.localEulerAngles.x, videoScenes[vidIndex].cameraYRotation, mainCamera.transform.localEulerAngles.z);
+        mainCamera.transform.rotation = Quaternion.Euler(mainCamera.transform.eulerAngles.x, videoScenes[vidIndex].cameraYRotation, mainCamera.transform.localEulerAngles.z);
     }
 
     IEnumerator EnableAfterDelay(GameObject toEnable, float delayInSeconds) {
@@ -328,6 +334,13 @@ public class GameController : MonoBehaviour {
         toEnable.SetActive(true);
     }
 
+    public void OnMediaDecoderVidEnd(string vidName) {
+        // action to take when mediadecoder ends video
+        if (videoPlayerControllers[0].GetVidName() != vidName) {
+            Debug.Log("Force change video");
+            PlayBlinkEffect("force");
+        }
+    }
     /* private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
 
          Debug.Log("CloseEyes!");

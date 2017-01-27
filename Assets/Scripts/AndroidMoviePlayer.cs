@@ -408,4 +408,8 @@ public class AndroidMoviePlayer : MonoBehaviour, IVideoPlayerController {
 
 	[DllImport("OculusMediaSurface")]
 	private static extern void OVR_Media_Surface_SetTextureParms(int texWidth, int texHeight);
+
+    public void RotateVideo(int rotateY) {
+        transform.localRotation = Quaternion.Euler(transform.eulerAngles.x, rotateY, transform.localEulerAngles.z);
+    }
 }
