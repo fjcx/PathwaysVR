@@ -10,6 +10,7 @@ public class LobbyController : MonoBehaviour {
     public Image infoImage;
     //public Image exitImage;
     public Image backImage;
+    public Image backImageOther;
     public GameObject lobbyObject;
     public GameObject creditsObject;
     public GameObject lobbyCeiling;
@@ -24,6 +25,7 @@ public class LobbyController : MonoBehaviour {
     public VRInteractiveItem interactInfo;
     //public VRInteractiveItem interactExit;
     public VRInteractiveItem interactBack;
+    public VRInteractiveItem interactBackOther;
     public VRInteractiveItem interactCredits;
     public VRInteractiveItem interactFrontWall;
 
@@ -45,6 +47,8 @@ public class LobbyController : MonoBehaviour {
         //interactExit.OnOut += HandleOutExit;
         interactBack.OnOver += HandleOverBack;
         interactBack.OnOut += HandleOutBack;
+        interactBackOther.OnOver += HandleOverBackOther;
+        interactBackOther.OnOut += HandleOutBackOther;
         interactCredits.OnOver += HandleOverCredits;
         interactCredits.OnOut += HandleOutCredits;
         interactFrontWall.OnOver += HandleOverFrontWall;
@@ -60,6 +64,8 @@ public class LobbyController : MonoBehaviour {
         //interactExit.OnOut -= HandleOutExit;
         interactBack.OnOver -= HandleOverBack;
         interactBack.OnOut -= HandleOutBack;
+        interactBackOther.OnOver -= HandleOverBackOther;
+        interactBackOther.OnOut -= HandleOutBackOther;
         interactCredits.OnOver -= HandleOverCredits;
         interactCredits.OnOut -= HandleOutCredits;
         interactFrontWall.OnOver -= HandleOverFrontWall;
@@ -96,6 +102,14 @@ public class LobbyController : MonoBehaviour {
 
     private void HandleOutBack() {
         HandleUp(backImage);
+    }
+
+    private void HandleOverBackOther() {
+        m_SelectionFillRoutine = StartCoroutine(FillSelectionRadial(backImageOther, "back"));
+    }
+
+    private void HandleOutBackOther() {
+        HandleUp(backImageOther);
     }
 
     private void HandleOverCredits() {
@@ -176,6 +190,7 @@ public class LobbyController : MonoBehaviour {
         lobbyLeftWall.SetActive(false);
         lobbyFloor.SetActive(false);
         lobbyBackWall.SetActive(false);
+        gameController.AfterEndCredits();
     }
 
     public void HideLobby() {

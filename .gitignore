@@ -11,6 +11,7 @@ UnityGenerated/
 TestVideos/*
 Assets/StreamingAssets/*.mp4
 Assets/Audio/*.aif
+Assets/Plugins/Android/assets/oculussig_*
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #

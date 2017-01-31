@@ -36,7 +36,7 @@ public class GameController : MonoBehaviour {
     //public string[] movieNames;
 
     public string blinkState = "none";
-    public float fadeDelayBetweenVideos = 0f;
+    public float fadeDelayBetweenVideos = 0.5f;
     public VideoScene[] videoScenes;
 
     // Use this for initialization
@@ -178,8 +178,14 @@ public class GameController : MonoBehaviour {
         videoPlayerControllers[currVidIndex].PlayVideo();
 #endif
         currAmbiAudioTrack = testIndex;
+        
         videoScenes[currAmbiAudioTrack].soundField.PlayScheduled(0);
         StartCoroutine(FadeInAmbiAudio(videoScenes[currAmbiAudioTrack].soundField, 6f));
+
+        if (currAmbiAudioTrack == 0) {
+            // for end credits stay silent until after back is pressed
+            videoScenes[currAmbiAudioTrack].soundField.Pause();
+        }
 
         if (testIndex == 0) {
             lobbyController.ShowCredits();
@@ -259,7 +265,7 @@ public class GameController : MonoBehaviour {
     }
 
     private IEnumerator FadeInAmbiAudio(GvrAudioSoundfield audioSoundField, float openTimeSpreader) {
-        Debug.Log("FadeIn!");
+        //Debug.Log("FadeIn!");
         float minMask = 0.0f;
         float maxMask = gvrTargetVolume;
         float currMask = minMask;
@@ -295,8 +301,9 @@ public class GameController : MonoBehaviour {
         if (cancelBlink == false) {
             NextVideo();
         }
-
-        yield return new WaitForSeconds(fadeWait);
+        Debug.Log("Waiting");
+        yield return new WaitForSeconds(1);
+        Debug.Log("Done waiting");
         StartCoroutine(FadeIn(openTimeSpreader));
     }
 
@@ -323,6 +330,7 @@ public class GameController : MonoBehaviour {
         fadeEffect.enabled = false;
         HideReticleDot(true);
         this.blinkState = "none";
+        Debug.Log("Done FadeIn!");
     }
 
     private void resetCameraPos(int vidIndex) {
@@ -340,6 +348,12 @@ public class GameController : MonoBehaviour {
             Debug.Log("Force change video");
             PlayBlinkEffect("force");
         }
+    }
+
+    public void AfterEndCredits() {
+        Debug.Log("After Creds");
+        videoScenes[currAmbiAudioTrack].soundField.UnPause();
+        videoScenes[currAmbiAudioTrack].soundField.volume = gvrTargetVolume;
     }
     /* private IEnumerator CloseEyes(float closeTimeSpreader, float openTimeSpreader, float blinkWait) {
 
